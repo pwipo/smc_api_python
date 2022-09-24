@@ -92,12 +92,20 @@ class SourceType(Enum):
 
 
 class SourceGetType(Enum):
-    __order__ = 'ALL NEW NEW_ALL LAST'
+    __order__ = 'ALL NEW NEW_ALL LAST LAST_ALL'
     ALL = 0
     NEW = 1
     NEW_ALL = 2
     LAST = 3
     LAST_ALL = 4
+
+
+class SourceFilterType(Enum):
+    __order__ = 'POSITION NUMBER STRING_EQUAL STRING_CONTAIN'
+    POSITION = 0
+    NUMBER = 1
+    STRING_EQUAL = 2
+    STRING_CONTAIN = 3
 
 
 class IValue:
@@ -524,7 +532,128 @@ class CFGIConfigurationManaged(CFGIConfiguration):
         pass
 
 
-class CFGIExecutionContext:
+class CFGISourceList:
+    """Interface for Source multipart"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def countSource(self):
+        # type: () -> int
+        """
+        count sources
+        """
+        pass
+
+    @abstractmethod
+    def getSource(self, id):
+        # type: (int) -> CFGISource
+        """
+        get source
+
+        :param int id:          serial number in the list of sources
+        :returns:
+            - CFGISource - if exist
+            - None - if not find
+        """
+        pass
+
+
+class CFGISourceListManaged(CFGISourceList):
+    """Interface for Managed Source multipart"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def createSourceConfiguration(self, configuration, getType=SourceGetType.NEW, countLast=1, eventDriven=False):
+        # type: (CFGIConfiguration, SourceGetType, int, bool) -> CFGISourceManaged
+        """
+        create source and bind it to this execution context
+        add source to end of current list (order = max_order + 1)
+        created ContextSourceType is MODULE_CONFIGURATION
+
+        :param CFGIConfiguration configuration: configuration source.
+        :param SourceGetType getType:   type of get commands from source.  default NEW.
+        :param int countLast:   only for ContextSourceGetType.LAST. minimum 1. default 1.
+        :param bool eventDriven:   if true, then source is event driven. default is false.
+        """
+        pass
+
+    @abstractmethod
+    def createSourceExecutionContext(self, executionContext, getType=SourceGetType.NEW, countLast=1, eventDriven=False):
+        # type: (CFGIExecutionContext, SourceGetType, int, bool) -> CFGISourceManaged
+        """
+        create source and bind it to this execution context
+        add source to end of current list (order = max_order + 1)
+        created ContextSourceType is EXECUTION_CONTEXT
+
+        :param CFGIExecutionContext executionContext: execution context source.
+        :param SourceGetType getType:   type of get commands from source.  default NEW.
+        :param int countLast:   only for ContextSourceGetType.LAST. minimum 1. default 1.
+        :param bool eventDriven:   if true, then source is event driven. default is false.
+        """
+        pass
+
+    @abstractmethod
+    def createSourceValue(self, value):
+        # type: (object) -> CFGISourceManaged
+        """
+        create source and bind it to this execution context
+        add source to end of current list (order = max_order + 1)
+        created ContextSourceType is STATIC_VALUE
+
+        :param object value: str, number or byte array.
+        """
+        pass
+
+    @abstractmethod
+    def createSource(self):
+        # type: () -> CFGISourceManaged
+        """
+        create source and bind it to this execution context
+        add source to end of list (order = max_order + 1)
+        created ContextSourceType is MULTIPART
+        """
+        pass
+
+    @abstractmethod
+    def removeSource(self, id):
+        # type: (int) -> None
+        """
+        remove source from list
+
+        :param int id:          serial number in the list of sources
+        """
+        pass
+
+    @abstractmethod
+    def getSourceListManaged(self, id):
+        # type: (int) -> CFGISourceListManaged
+        """
+        get managed source list
+
+        :param int id:          serial number in the list of sources
+        :returns:
+            - CFGISourceListManaged - if exist
+            - None - if not find
+        """
+        pass
+
+    @abstractmethod
+    def getSourceManaged(self, id):
+        # type: (int) -> CFGISourceManaged
+        """
+        get managed source
+
+        :param int id:          serial number in the list of sources
+        :returns:
+            - CFGISourceManaged - if exist
+            - None - if not find
+        """
+        pass
+
+
+class CFGIExecutionContext(CFGISourceList):
     """Interface for Execution Context"""
 
     __metaclass__ = ABCMeta
@@ -557,116 +686,7 @@ class CFGIExecutionContext:
         pass
 
 
-class CFGISourceList:
-    """tool for work with unmodifiable files"""
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def countSources(self):
-        # type: () -> int
-        """
-        count sources
-        """
-        pass
-
-    @abstractmethod
-    def getSource(self, id):
-        # type: (int) -> CFGISource
-        """
-        get source
-
-        :param int id:          serial number in the list of sources
-        :returns:
-            - CFGISource - if exist
-            - None - if not find
-        """
-        pass
-
-    @abstractmethod
-    def createSourceConfiguration(self, configuration, getType=SourceGetType.NEW, countLast=1, eventDriven=False):
-        # type: (CFGIConfiguration, SourceGetType, int, bool) -> CFGISource
-        """
-        create source and bind it to this execution context
-        add source to end of current list (order = max_order + 1)
-        created ContextSourceType is MODULE_CONFIGURATION
-
-        :param CFGIConfiguration configuration: configuration source.
-        :param SourceGetType getType:   type of get commands from source.  default NEW.
-        :param int countLast:   only for ContextSourceGetType.LAST. minimum 1. default 1.
-        :param bool eventDriven:   if true, then source is event driven. default is false.
-        """
-        pass
-
-    @abstractmethod
-    def createSourceExecutionContext(self, executionContext, getType=SourceGetType.NEW, countLast=1, eventDriven=False):
-        # type: (CFGIExecutionContext, SourceGetType, int, bool) -> CFGISource
-        """
-        create source and bind it to this execution context
-        add source to end of current list (order = max_order + 1)
-        created ContextSourceType is EXECUTION_CONTEXT
-
-        :param CFGIExecutionContext executionContext: execution context source.
-        :param SourceGetType getType:   type of get commands from source.  default NEW.
-        :param int countLast:   only for ContextSourceGetType.LAST. minimum 1. default 1.
-        :param bool eventDriven:   if true, then source is event driven. default is false.
-        """
-        pass
-
-    @abstractmethod
-    def createSourceValue(self, value):
-        # type: (object) -> CFGISource
-        """
-        create source and bind it to this execution context
-        add source to end of current list (order = max_order + 1)
-        created ContextSourceType is STATIC_VALUE
-
-        :param object value: str, number or byte array.
-        """
-        pass
-
-    @abstractmethod
-    def createSource(self):
-        # type: () -> CFGISource
-        """
-        create source and bind it to this execution context
-        add source to end of list (order = max_order + 1)
-        created ContextSourceType is MULTIPART
-        """
-        pass
-
-    @abstractmethod
-    def changeOrderUp(self, id):
-        # type: (int) -> None
-        """
-        change order - up.
-
-        :param int id:          serial number in the list of sources
-        """
-        pass
-
-    @abstractmethod
-    def changeOrderDown(self, id):
-        # type: (int) -> None
-        """
-        change order - down.
-
-        :param int id:          serial number in the list of sources
-        """
-        pass
-
-    @abstractmethod
-    def removeSource(self, id):
-        # type: (int) -> None
-        """
-        remove source from list
-
-        :param int id:          serial number in the list of sources
-        """
-        pass
-
-
-class CFGIExecutionContextManaged(CFGIExecutionContext, CFGISourceList):
+class CFGIExecutionContextManaged(CFGIExecutionContext, CFGISourceListManaged):
     """Interface for Managed Execution Context"""
 
     __metaclass__ = ABCMeta
@@ -788,6 +808,42 @@ class CFGIExecutionContextManaged(CFGIExecutionContext, CFGISourceList):
         pass
 
 
+class CFGISourceFilter:
+    """Interface for Source filter"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def getType(self):
+        # type: () -> SourceFilterType
+        """get type of filter."""
+        pass
+
+    @abstractmethod
+    def countParams(self):
+        # type: () -> int
+        """
+        count params
+        """
+        pass
+
+    @abstractmethod
+    def getParam(self, id):
+        # type: (int) -> object
+        """
+        get param
+        params may have any types, depends on the SourceFilterType and id
+
+        :param int id:         serial number in the list of filter params
+        :returns:
+            - POSITION: Array[int] (n*2 elements: from - inclusive and to - exclusive for range or position and null), int (period length, if greater than zero, then defines the set within which the previous list values apply), int (count periods, determines the number of periods), int (start offset, before the first period)
+            - NUMBER: float (min, inclusive), float (max, inclusive)
+            - STRING_EQUAL: boolean (type, if true then need equals, also, not equal), string (value for compare)
+            - STRING_CONTAIN: boolean (type, if true then need contain, also, not contain), string (value)
+        """
+        pass
+
+
 class CFGISource:
     """Interface for Source"""
 
@@ -800,46 +856,116 @@ class CFGISource:
         pass
 
     @abstractmethod
-    def getValue(self):
-        # type: () -> object
-        """
-        get value
-        depend on type
-
-        :returns:
-            - CFGIConfiguration - for MODULE_CONFIGURATION
-            - CFGIExecutionContext - for EXECUTION_CONTEXT
-            - IValue - for STATIC_VALUE
-            - None - for MULTIPART
-        """
-        pass
-
-    @abstractmethod
-    def getOrder(self):
+    def countParams(self):
         # type: () -> int
         """
-        get order.
-        determines the position in the source list.
+        count params
         """
         pass
 
     @abstractmethod
-    def isEventDriven(self):
-        # type: () -> bool
+    def getParam(self, id):
+        # type: (int) -> object
         """
-        is source event driven
-        """
-        pass
+        get param
+        params may have any types, depends on the SourceType and id
 
-    @abstractmethod
-    def getList(self):
-        # type: () -> CFGISourceList
-        """
-        get source list
-
+        :param int id:         serial number in the list of source params
         :returns:
-            - CFGISourceList - for MULTIPART
-            - None - for other types
+            - MODULE_CONFIGURATION: CFGIConfiguration configuration (source), SourceGetType getType (type of get commands from source), int countLast (only for SourceGetType.LAST. minimum 1), boolean eventDriven (is event driven)
+            - EXECUTION_CONTEXT: CFGIExecutionContext executionContext (source), SourceGetType getType (type of get commands from source), int countLast (only for SourceGetType.LAST. minimum 1), boolean eventDriven (is event driven)
+            - STATIC_VALUE: IValue (String, Number or byte array)
+            - MULTIPART: null
+            - CALLER_RELATIVE_NAME: string (caller level cfg name)
+        """
+        pass
+
+    @abstractmethod
+    def countFilters(self):
+        # type: () -> int
+        """
+        count filters
+        """
+        pass
+
+    @abstractmethod
+    def getFilter(self, id):
+        # type: (int) -> CFGISourceFilter
+        """
+        get filter
+
+        :param int id:         serial number in the list of Filters
+        :returns: CFGISourceFilter
+        """
+        pass
+
+
+class CFGISourceManaged(CFGISource):
+    """Interface for Managed Source"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def createFilterPosition(self, range, period=0, countPeriods=0, startOffset=0):
+        # type: (List[int], int, int, int) -> CFGISourceFilter
+        """
+        Create position filter and bind it to this source
+        add filter to end of current list (order = max_order + 1)
+        only for MODULE_CONFIGURATION and EXECUTION_CONTEXT SourceType
+
+        :param List[int] range:     n*2 elements: from - inclusive and to - exclusive for range or position and null
+        :param int period:          period length, if greater than zero, then defines the set within which the previous list values apply
+        :param int countPeriods:    determines the number of periods
+        :param int startOffset:     before the first period
+        """
+        pass
+
+    @abstractmethod
+    def createFilterNumber(self, min, max):
+        # type: (int, int) -> CFGISourceFilter
+        """
+        Create number filter and bind it to this source
+        add filter to end of current list (order = max_order + 1)
+        only for MODULE_CONFIGURATION and EXECUTION_CONTEXT SourceType
+
+        :param int min:    inclusive
+        :param int max:    inclusive
+        """
+        pass
+
+    @abstractmethod
+    def createFilterStrEq(self, needEquals, value):
+        # type: (bool, str) -> CFGISourceFilter
+        """
+        Create string equal filter and bind it to this source
+        add filter to end of current list (order = max_order + 1)
+        only for MODULE_CONFIGURATION and EXECUTION_CONTEXT SourceType
+
+        :param bool needEquals:     if true then need equals, also, not equal
+        :param str value:           value for compare
+        """
+        pass
+
+    @abstractmethod
+    def createFilterStrContain(self, needContain, value):
+        # type: (bool, str) -> CFGISourceFilter
+        """
+        Create string contain filter and bind it to this source
+        add filter to end of current list (order = max_order + 1)
+        only for MODULE_CONFIGURATION and EXECUTION_CONTEXT SourceType
+
+        :param bool needContain:    if true then need equals, also, not equal
+        :param str value:           value for compare
+        """
+        pass
+
+    @abstractmethod
+    def removeFilter(self, id):
+        # type: (int) -> None
+        """
+        remove filter from list
+
+        :param int id:          serial number in the list of filters
         """
         pass
 
@@ -1054,12 +1180,6 @@ class ExecutionContextTool(CFGIExecutionContext):
 
         :param object value:    object (string, number, bytes)
         """
-        pass
-
-    @abstractmethod
-    def countSource(self):
-        # type: () -> int
-        """get count sources"""
         pass
 
     @abstractmethod
