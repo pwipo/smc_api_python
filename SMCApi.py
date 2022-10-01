@@ -1,7 +1,8 @@
 import datetime
-from abc import ABCMeta, abstractmethod
 
+from abc import ABCMeta, abstractmethod
 from enum import Enum
+from typing import List, Dict
 
 
 # from typing import Dict, List
@@ -108,6 +109,30 @@ class SourceFilterType(Enum):
     STRING_CONTAIN = 3
 
 
+class INumber:
+    """Interface for number object"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def intValue(self):
+        # type: () -> int
+        """to int type value"""
+        pass
+
+    @abstractmethod
+    def longValue(self):
+        # type: () -> long
+        """to long type value"""
+        pass
+
+    @abstractmethod
+    def floatValue(self):
+        # type: () -> float
+        """to float type value"""
+        pass
+
+
 class IValue:
     """Interface for value objects"""
 
@@ -121,7 +146,7 @@ class IValue:
 
     @abstractmethod
     def getValue(self):
-        # type: () -> object
+        # type: () -> str or bytes or INumber
         """value as object"""
         pass
 
@@ -361,7 +386,7 @@ class CFGIConfiguration:
 
     @abstractmethod
     def getAllSettings(self):
-        # type: () -> Dict[str, IValue]
+        # type: () -> Dict[str, str or bytes or INumber]
         """
         get all settings
         """
@@ -375,7 +400,7 @@ class CFGIConfiguration:
 
         :param str key:         setting name
         :returns:
-            - IValue - if exist
+            - str or bytes or INumber - if exist
             - None - if not find
         """
         pass
@@ -396,7 +421,7 @@ class CFGIConfiguration:
 
         :param str key:         variable name
         :returns:
-            - IValue - if exist
+            - str or bytes or INumber - if exist
             - None - if not find
         """
         pass
@@ -447,7 +472,7 @@ class CFGIConfigurationManaged(CFGIConfiguration):
         change variable
 
         :param str key:         variable name
-        :param object value:    value object (string, number, bytes)
+        :param str or bytes or INumber value:    value object
         """
         pass
 
@@ -1078,8 +1103,8 @@ class ConfigurationTool(CFGIConfiguration):
         """
         change variable
 
-        :param str key:         variable name
-        :param object value:    value object (string, number, bytes)
+        :param str key:                         variable name
+        :param str or bytes or INumber value:   value object ()
         """
         pass
 
