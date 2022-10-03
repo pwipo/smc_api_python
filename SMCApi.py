@@ -1,6 +1,6 @@
 import datetime
-
 from abc import ABCMeta, abstractmethod
+
 from enum import Enum
 from typing import List, Dict, Optional
 
@@ -13,121 +13,174 @@ class ModuleException(Exception):
         self.txt = text
 
 
-class ActionType(Enum):
-    __order__ = 'START EXECUTE UPDATE STOP'
-    START = 0
-    EXECUTE = 1
-    UPDATE = 2
-    STOP = 3
+# class ActionType(Enum):
+#     __order__ = 'START EXECUTE UPDATE STOP'
+#     START = 0
+#     EXECUTE = 1
+#     UPDATE = 2
+#     STOP = 3
+ActionType = Enum('START', 'EXECUTE', 'UPDATE', 'STOP')
+ActionType.START.value = 0
+ActionType.EXECUTE.value = 1
+ActionType.UPDATE.value = 2
+ActionType.STOP.value = 3
 
+# class CommandType(Enum):
+#     __order__ = 'START EXECUTE UPDATE STOP'
+#     START = 0
+#     EXECUTE = 1
+#     UPDATE = 2
+#     STOP = 3
+CommandType = Enum('START', 'EXECUTE', 'UPDATE', 'STOP')
+CommandType.START.value = 0
+CommandType.EXECUTE.value = 1
+CommandType.UPDATE.value = 2
+CommandType.STOP.value = 3
 
-class CommandType(Enum):
-    __order__ = 'START EXECUTE UPDATE STOP'
-    START = 0
-    EXECUTE = 1
-    UPDATE = 2
-    STOP = 3
+# class MessageType(Enum):
+#     MESSAGE_PROCESS_STATE_CHANGE = 1
+#
+#     MESSAGE_ACTION_START = 4
+#     MESSAGE_ACTION_STOP = 6
+#     MESSAGE_ACTION_ERROR = 7
+#
+#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_SETTING_UPDATE = 108
+#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_UPDATE = 109
+#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_REMOVE = 110
+#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_CREATE = 111
+#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_UPDATE = 112
+#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_REMOVE = 113
+#     MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_CREATE = 114
+#     MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_UPDATE = 115
+#     MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_REMOVE = 116
+#     MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_CREATE = 117
+#     MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_UPDATE = 118
+#     MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_REMOVE = 119
+#     MESSAGE_CONFIGURATION_CONTROL_CONTAINER_CREATE = 120
+#     MESSAGE_CONFIGURATION_CONTROL_CONTAINER_REMOVE = 121
+#
+#     MESSAGE_FLOW_CONTROL_EXECUTE_NOW_START = 220
+#     MESSAGE_FLOW_CONTROL_EXECUTE_NOW_EXECUTE = 221
+#     MESSAGE_FLOW_CONTROL_EXECUTE_NOW_UPDATE = 222
+#     MESSAGE_FLOW_CONTROL_EXECUTE_NOW_STOP = 223
+#     MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_START = 224
+#     MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_EXECUTE = 225
+#     MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_UPDATE = 226
+#     MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_STOP = 227
+#     MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS = 228
+#
+#     MESSAGE_ERROR_TYPE = 1000
+#     MESSAGE_DATA = 1001
+MessageType = Enum('MESSAGE_PROCESS_STATE_CHANGE', 'MESSAGE_ACTION_START', 'MESSAGE_ACTION_STOP', 'MESSAGE_ACTION_ERROR'
+                   , 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_SETTING_UPDATE', 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_UPDATE'
+                   , 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_REMOVE', 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_CREATE'
+                   , 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_UPDATE', 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_REMOVE'
+                   , 'MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_CREATE', 'MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_UPDATE'
+                   , 'MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_REMOVE', 'MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_CREATE'
+                   , 'MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_UPDATE', 'MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_REMOVE'
+                   , 'MESSAGE_CONFIGURATION_CONTROL_CONTAINER_CREATE', 'MESSAGE_CONFIGURATION_CONTROL_CONTAINER_REMOVE'
+                   , 'MESSAGE_FLOW_CONTROL_EXECUTE_NOW_START', 'MESSAGE_FLOW_CONTROL_EXECUTE_NOW_EXECUTE'
+                   , 'MESSAGE_FLOW_CONTROL_EXECUTE_NOW_UPDATE', 'MESSAGE_FLOW_CONTROL_EXECUTE_NOW_STOP'
+                   , 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_START', 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_EXECUTE'
+                   , 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_UPDATE', 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_STOP'
+                   , 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS', 'MESSAGE_ERROR_TYPE'
+                   , 'MESSAGE_DATA'
+                   )
+MessageType.MESSAGE_PROCESS_STATE_CHANGE.value = 1
+MessageType.MESSAGE_ACTION_START.value = 4
+MessageType.MESSAGE_ACTION_STOP.value = 6
+MessageType.MESSAGE_ACTION_ERROR.value = 7
+MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_SETTING_UPDATE.value = 108
+MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_UPDATE.value = 109
+MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_REMOVE.value = 110
+MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_CREATE.value = 111
+MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_UPDATE.value = 112
+MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_REMOVE.value = 113
+MessageType.MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_CREATE.value = 114
+MessageType.MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_UPDATE.value = 115
+MessageType.MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_REMOVE.value = 116
+MessageType.MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_CREATE.value = 117
+MessageType.MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_UPDATE.value = 118
+MessageType.MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_REMOVE.value = 119
+MessageType.MESSAGE_CONFIGURATION_CONTROL_CONTAINER_CREATE.value = 120
+MessageType.MESSAGE_CONFIGURATION_CONTROL_CONTAINER_REMOVE.value = 121
+MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_NOW_START.value = 220
+MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_NOW_EXECUTE.value = 221
+MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_NOW_UPDATE.value = 222
+MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_NOW_STOP.value = 223
+MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_START.value = 224
+MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_EXECUTE.value = 225
+MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_UPDATE.value = 226
+MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_STOP.value = 227
+MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS.value = 228
+MessageType.MESSAGE_ERROR_TYPE.value = 1000
+MessageType.MESSAGE_DATA.value = 1001
 
+# class ValueType(Enum):
+#     __order__ = 'STRING BYTE SHORT INTEGER LONG BIG_INTEGER FLOAT DOUBLE BIG_DECIMAL BYTES'
+#     STRING = 0
+#     BYTE = 1
+#     SHORT = 2
+#     INTEGER = 3
+#     LONG = 4
+#     BIG_INTEGER = 5
+#     FLOAT = 6
+#     DOUBLE = 7
+#     BIG_DECIMAL = 8
+#     BYTES = 9
+ValueType = Enum('STRING', 'BYTE', 'SHORT', 'INTEGER', 'LONG', 'BIG_INTEGER', 'FLOAT', 'DOUBLE', 'BIG_DECIMAL', 'BYTES')
+ValueType.STRING.value = 0
+ValueType.BYTE.value = 1
+ValueType.SHORT.value = 2
+ValueType.INTEGER.value = 3
+ValueType.LONG.value = 4
+ValueType.BIG_INTEGER.value = 5
+ValueType.FLOAT.value = 6
+ValueType.DOUBLE.value = 7
+ValueType.BIG_DECIMAL.value = 8
+ValueType.BYTES.value = 9
 
-class MessageType(Enum):
-    MESSAGE_PROCESS_STATE_CHANGE = 1
+# class SourceType(Enum):
+#     __order__ = 'MODULE_CONFIGURATION EXECUTION_CONTEXT STATIC_VALUE MULTIPART CALLER CALLER_RELATIVE_NAME'
+#     MODULE_CONFIGURATION = 0
+#     EXECUTION_CONTEXT = 1
+#     STATIC_VALUE = 2
+#     MULTIPART = 3
+#     CALLER = 4
+#     CALLER_RELATIVE_NAME = 5
+SourceType = Enum('MODULE_CONFIGURATION', 'EXECUTION_CONTEXT', 'STATIC_VALUE', 'MULTIPART', 'CALLER', 'CALLER_RELATIVE_NAME')
+SourceType.MODULE_CONFIGURATION.value = 0
+SourceType.EXECUTION_CONTEXT.value = 1
+SourceType.STATIC_VALUE.value = 2
+SourceType.MULTIPART.value = 3
+SourceType.CALLER.value = 4
+SourceType.CALLER_RELATIVE_NAME.value = 5
 
-    MESSAGE_ACTION_START = 4
-    MESSAGE_ACTION_STOP = 6
-    MESSAGE_ACTION_ERROR = 7
+# class SourceGetType(Enum):
+#     __order__ = 'ALL NEW NEW_ALL LAST LAST_ALL'
+#     ALL = 0
+#     NEW = 1
+#     NEW_ALL = 2
+#     LAST = 3
+#     LAST_ALL = 4
+SourceGetType = Enum('ALL', 'NEW', 'NEW_ALL', 'LAST', 'LAST_ALL')
+SourceGetType.ALL.value = 0
+SourceGetType.NEW.value = 1
+SourceGetType.NEW_ALL.value = 2
+SourceGetType.LAST.value = 3
+SourceGetType.LAST_ALL.value = 4
 
-    MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_SETTING_UPDATE = 108
-    MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_UPDATE = 109
-    MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_REMOVE = 110
-    MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_CREATE = 111
-    MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_UPDATE = 112
-    MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_REMOVE = 113
-    MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_CREATE = 114
-    MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_UPDATE = 115
-    MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_REMOVE = 116
-    MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_CREATE = 117
-    MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_UPDATE = 118
-    MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_REMOVE = 119
-    MESSAGE_CONFIGURATION_CONTROL_CONTAINER_CREATE = 120
-    MESSAGE_CONFIGURATION_CONTROL_CONTAINER_REMOVE = 121
-
-    MESSAGE_FLOW_CONTROL_EXECUTE_NOW_START = 220
-    MESSAGE_FLOW_CONTROL_EXECUTE_NOW_EXECUTE = 221
-    MESSAGE_FLOW_CONTROL_EXECUTE_NOW_UPDATE = 222
-    MESSAGE_FLOW_CONTROL_EXECUTE_NOW_STOP = 223
-    MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_START = 224
-    MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_EXECUTE = 225
-    MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_UPDATE = 226
-    MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_STOP = 227
-    MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS = 228
-
-    MESSAGE_ERROR_TYPE = 1000
-    MESSAGE_DATA = 1001
-
-
-class ValueType(Enum):
-    __order__ = 'STRING BYTE SHORT INTEGER LONG BIG_INTEGER FLOAT DOUBLE BIG_DECIMAL BYTES'
-    STRING = 0
-    BYTE = 1
-    SHORT = 2
-    INTEGER = 3
-    LONG = 4
-    BIG_INTEGER = 5
-    FLOAT = 6
-    DOUBLE = 7
-    BIG_DECIMAL = 8
-    BYTES = 9
-
-
-class SourceType(Enum):
-    __order__ = 'MODULE_CONFIGURATION EXECUTION_CONTEXT STATIC_VALUE MULTIPART CALLER CALLER_RELATIVE_NAME'
-    MODULE_CONFIGURATION = 0
-    EXECUTION_CONTEXT = 1
-    STATIC_VALUE = 2
-    MULTIPART = 3
-    CALLER = 4
-    CALLER_RELATIVE_NAME = 5
-
-
-class SourceGetType(Enum):
-    __order__ = 'ALL NEW NEW_ALL LAST LAST_ALL'
-    ALL = 0
-    NEW = 1
-    NEW_ALL = 2
-    LAST = 3
-    LAST_ALL = 4
-
-
-class SourceFilterType(Enum):
-    __order__ = 'POSITION NUMBER STRING_EQUAL STRING_CONTAIN'
-    POSITION = 0
-    NUMBER = 1
-    STRING_EQUAL = 2
-    STRING_CONTAIN = 3
-
-
-class INumber:
-    """Interface for number object"""
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def intValue(self):
-        # type: () -> int
-        """to int type value"""
-        pass
-
-    @abstractmethod
-    def longValue(self):
-        # type: () -> long
-        """to long type value"""
-        pass
-
-    @abstractmethod
-    def floatValue(self):
-        # type: () -> float
-        """to float type value"""
-        pass
+# class SourceFilterType(Enum):
+#     __order__ = 'POSITION NUMBER STRING_EQUAL STRING_CONTAIN'
+#     POSITION = 0
+#     NUMBER = 1
+#     STRING_EQUAL = 2
+#     STRING_CONTAIN = 3
+SourceFilterType = Enum('POSITION', 'NUMBER', 'STRING_EQUAL', 'STRING_CONTAIN')
+SourceFilterType.POSITION.value = 0
+SourceFilterType.NUMBER.value = 1
+SourceFilterType.STRING_EQUAL.value = 2
+SourceFilterType.STRING_CONTAIN.value = 3
 
 
 class IValue:
@@ -143,7 +196,7 @@ class IValue:
 
     @abstractmethod
     def getValue(self):
-        # type: () -> str or bytes or INumber
+        # type: () -> str or bytes or int or long or float
         """value as object"""
         pass
 
@@ -358,478 +411,6 @@ class CFGIContainerManaged(CFGIContainer):
         pass
 
 
-class CFGIConfiguration:
-    """Interface for Module Configuration"""
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def getModule(self):
-        # type: () -> CFGIModule
-        """get module"""
-        pass
-
-    @abstractmethod
-    def getName(self):
-        # type: () -> str
-        """get name"""
-        pass
-
-    @abstractmethod
-    def getDescription(self):
-        # type: () -> str
-        """get description"""
-        pass
-
-    @abstractmethod
-    def getAllSettings(self):
-        # type: () -> Dict[str, str or bytes or INumber]
-        """
-        get all settings
-        """
-        pass
-
-    @abstractmethod
-    def getSetting(self, key):
-        # type: (str) -> Optional[IValue]
-        """
-        get setting value
-
-        :param str key:         setting name
-        :returns:
-            - str or bytes or INumber - if exist
-            - None - if not find
-        """
-        pass
-
-    @abstractmethod
-    def getAllVariables(self):
-        # type: () -> Dict[str, IValue]
-        """
-        get all variables
-        """
-        pass
-
-    @abstractmethod
-    def getVariable(self, key):
-        # type: (str) -> Optional[IValue]
-        """
-        get variable value
-
-        :param str key:         variable name
-        :returns:
-            - str or bytes or INumber - if exist
-            - None - if not find
-        """
-        pass
-
-    @abstractmethod
-    def getBufferSize(self):
-        # type: () -> int
-        """get buffer size"""
-        pass
-
-    @abstractmethod
-    def isEnable(self):
-        # type: () -> bool
-        """is work"""
-        pass
-
-
-class CFGIConfigurationManaged(CFGIConfiguration):
-    """Interface for Managed Module Configuration"""
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def setName(self, name):
-        # type: (str) -> None
-        """
-        change name
-
-        :param str name:        unique name for container
-        """
-        pass
-
-    @abstractmethod
-    def setSetting(self, key, value):
-        # type: (str, object) -> None
-        """
-        change setting
-
-        :param str key:         setting name
-        :param object value:    value object (string, number, bytes)
-        """
-        pass
-
-    @abstractmethod
-    def setVariable(self, key, value):
-        # type: (str, object) -> None
-        """
-        change variable
-
-        :param str key:         variable name
-        :param str or bytes or INumber value:    value object
-        """
-        pass
-
-    @abstractmethod
-    def removeVariable(self, key):
-        # type: (str) -> None
-        """
-        remove variable
-
-        :param str key:         variable name
-        """
-        pass
-
-    @abstractmethod
-    def setBufferSize(self, bufferSize):
-        # type: (int) -> None
-        """
-        change buffer size
-
-        :param int bufferSize:  1 is minimum
-        """
-        pass
-
-    @abstractmethod
-    def setEnable(self, enable):
-        # type: (bool) -> None
-        """
-        enable or disable
-
-        :param bool enable:     true for enable
-        """
-        pass
-
-    @abstractmethod
-    def countExecutionContexts(self):
-        # type: () -> int
-        """
-        count execution contexts
-        """
-        pass
-
-    @abstractmethod
-    def getExecutionContext(self, id):
-        # type: (int) -> Optional[CFGIExecutionContextManaged]
-        """
-        get execution context
-
-        :param int id:         serial number in the list of Execution Contexts
-        :returns:
-            - CFGIExecutionContextManaged - if exist
-            - None - if not find
-        """
-        pass
-
-    @abstractmethod
-    def createExecutionContext(self, name, maxWorkInterval=-1):
-        # type: (str, int) -> CFGIExecutionContextManaged
-        """
-        create execution context and bind it to this configuration
-
-        :param str name:        unique name for configuration
-        :param int maxWorkInterval: max work interval. if -1, no time limit. in milliseconds. default is -1
-        """
-        pass
-
-    @abstractmethod
-    def removeExecutionContext(self, id):
-        # type: (int) -> None
-        """
-        delete execution context
-
-        :param int id:          serial number in the list of Execution Contexts
-        """
-        pass
-
-    @abstractmethod
-    def getContainer(self):
-        # type: () -> CFGIContainerManaged
-        """
-        get container
-        """
-        pass
-
-
-class CFGISourceList:
-    """Interface for Source multipart"""
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def countSource(self):
-        # type: () -> int
-        """
-        count sources
-        """
-        pass
-
-    @abstractmethod
-    def getSource(self, id):
-        # type: (int) -> Optional[CFGISource]
-        """
-        get source
-
-        :param int id:          serial number in the list of sources
-        :returns:
-            - CFGISource - if exist
-            - None - if not find
-        """
-        pass
-
-
-class CFGISourceListManaged(CFGISourceList):
-    """Interface for Managed Source multipart"""
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def createSourceConfiguration(self, configuration, getType=SourceGetType.NEW, countLast=1, eventDriven=False):
-        # type: (CFGIConfiguration, SourceGetType, int, bool) -> CFGISourceManaged
-        """
-        create source and bind it to this execution context
-        add source to end of current list (order = max_order + 1)
-        created ContextSourceType is MODULE_CONFIGURATION
-
-        :param CFGIConfiguration configuration: configuration source.
-        :param SourceGetType getType:   type of get commands from source.  default NEW.
-        :param int countLast:   only for ContextSourceGetType.LAST. minimum 1. default 1.
-        :param bool eventDriven:   if true, then source is event driven. default is false.
-        """
-        pass
-
-    @abstractmethod
-    def createSourceExecutionContext(self, executionContext, getType=SourceGetType.NEW, countLast=1, eventDriven=False):
-        # type: (CFGIExecutionContext, SourceGetType, int, bool) -> CFGISourceManaged
-        """
-        create source and bind it to this execution context
-        add source to end of current list (order = max_order + 1)
-        created ContextSourceType is EXECUTION_CONTEXT
-
-        :param CFGIExecutionContext executionContext: execution context source.
-        :param SourceGetType getType:   type of get commands from source.  default NEW.
-        :param int countLast:   only for ContextSourceGetType.LAST. minimum 1. default 1.
-        :param bool eventDriven:   if true, then source is event driven. default is false.
-        """
-        pass
-
-    @abstractmethod
-    def createSourceValue(self, value):
-        # type: (object) -> CFGISourceManaged
-        """
-        create source and bind it to this execution context
-        add source to end of current list (order = max_order + 1)
-        created ContextSourceType is STATIC_VALUE
-
-        :param object value: str, number or byte array.
-        """
-        pass
-
-    @abstractmethod
-    def createSource(self):
-        # type: () -> CFGISourceManaged
-        """
-        create source and bind it to this execution context
-        add source to end of list (order = max_order + 1)
-        created ContextSourceType is MULTIPART
-        """
-        pass
-
-    @abstractmethod
-    def removeSource(self, id):
-        # type: (int) -> None
-        """
-        remove source from list
-
-        :param int id:          serial number in the list of sources
-        """
-        pass
-
-    @abstractmethod
-    def getSourceListManaged(self, id):
-        # type: (int) -> Optional[CFGISourceListManaged]
-        """
-        get managed source list
-
-        :param int id:          serial number in the list of sources
-        :returns:
-            - CFGISourceListManaged - if exist
-            - None - if not find
-        """
-        pass
-
-    @abstractmethod
-    def getSourceManaged(self, id):
-        # type: (int) -> Optional[CFGISourceManaged]
-        """
-        get managed source
-
-        :param int id:          serial number in the list of sources
-        :returns:
-            - CFGISourceManaged - if exist
-            - None - if not find
-        """
-        pass
-
-
-class CFGIExecutionContext(CFGISourceList):
-    """Interface for Execution Context"""
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def getConfiguration(self):
-        # type: () -> CFGIConfiguration
-        """get configuration"""
-        pass
-
-    @abstractmethod
-    def getName(self):
-        # type: () -> str
-        """get name"""
-        pass
-
-    @abstractmethod
-    def getMaxWorkInterval(self):
-        # type: () -> int
-        """
-        get max work interval in milliseconds
-        if -1, no time limit
-        """
-        pass
-
-    @abstractmethod
-    def isEnable(self):
-        # type: () -> bool
-        """is work"""
-        pass
-
-
-class CFGIExecutionContextManaged(CFGIExecutionContext, CFGISourceListManaged):
-    """Interface for Managed Execution Context"""
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def setName(self, name):
-        # type: (str) -> None
-        """
-        change name
-
-        :param str name:        unique name for configuration
-        """
-        pass
-
-    @abstractmethod
-    def setMaxWorkInterval(self, maxWorkInterval):
-        # type: (int) -> None
-        """
-        change max work interval
-
-        :param int maxWorkInterval: if -1, no time limit. in milliseconds
-        """
-        pass
-
-    @abstractmethod
-    def setEnable(self, enable):
-        # type: (bool) -> None
-        """
-        enable or disable
-
-        :param bool enable:     true for enable
-        """
-        pass
-
-    @abstractmethod
-    def countExecutionContexts(self):
-        # type: () -> int
-        """
-        count execution contexts
-        """
-        pass
-
-    @abstractmethod
-    def getExecutionContext(self, id):
-        # type: (int) -> Optional[CFGIExecutionContext]
-        """
-        get execution context
-
-        :param int id:          serial number in the list of Execution Contexts
-        :returns:
-            - CFGIExecutionContext - if exist
-            - None - if not find
-        """
-        pass
-
-    @abstractmethod
-    def insertExecutionContext(self, id, executionContext):
-        # type: (int, CFGIExecutionContext) -> None
-        """
-        insert execution context in list
-        Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
-
-        :param int id:          serial number in the list of Execution Contexts
-        :param CFGIExecutionContext executionContext:   execution context
-        """
-        pass
-
-    @abstractmethod
-    def removeExecutionContext(self, id):
-        # type: (int) -> None
-        """
-        remove execution context from list
-
-        :param int id:          serial number in the list of Execution Contexts
-        """
-        pass
-
-    @abstractmethod
-    def countManagedConfigurations(self):
-        # type: () -> int
-        """
-        count managed configurations
-        """
-        pass
-
-    @abstractmethod
-    def getManagedConfiguration(self, id):
-        # type: (int) -> Optional[CFGIConfiguration]
-        """
-        get managed configuration
-
-        :param int id:          serial number in the list of Managed configurations
-        :returns:
-            - CFGIConfiguration - if exist
-            - None - if not find
-       """
-        pass
-
-    @abstractmethod
-    def insertManagedConfiguration(self, id, configuration):
-        # type: (int, CFGIConfiguration) -> None
-        """
-        insert configuration in list
-        Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
-
-        :param int id:          serial number in the list of Managed configurations
-        :param CFGIConfiguration configuration: configuration
-        """
-        pass
-
-    @abstractmethod
-    def removeManagedConfiguration(self, id):
-        # type: (int) -> None
-        """
-        remove configuration from list
-
-        :param int id:          serial number in the list of Managed configurations
-        """
-        pass
-
-
 class CFGISourceFilter:
     """Interface for Source filter"""
 
@@ -992,6 +573,478 @@ class CFGISourceManaged(CFGISource):
         pass
 
 
+class CFGISourceList:
+    """Interface for Source multipart"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def countSource(self):
+        # type: () -> int
+        """
+        count sources
+        """
+        pass
+
+    @abstractmethod
+    def getSource(self, id):
+        # type: (int) -> Optional[CFGISource]
+        """
+        get source
+
+        :param int id:          serial number in the list of sources
+        :returns:
+            - CFGISource - if exist
+            - None - if not find
+        """
+        pass
+
+
+class CFGISourceListManaged(CFGISourceList):
+    """Interface for Managed Source multipart"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def createSourceConfiguration(self, configuration, getType=SourceGetType.NEW, countLast=1, eventDriven=False):
+        # type: (CFGIConfiguration, SourceGetType, int, bool) -> CFGISourceManaged
+        """
+        create source and bind it to this execution context
+        add source to end of current list (order = max_order + 1)
+        created ContextSourceType is MODULE_CONFIGURATION
+
+        :param CFGIConfiguration configuration: configuration source.
+        :param SourceGetType getType:   type of get commands from source.  default NEW.
+        :param int countLast:   only for ContextSourceGetType.LAST. minimum 1. default 1.
+        :param bool eventDriven:   if true, then source is event driven. default is false.
+        """
+        pass
+
+    @abstractmethod
+    def createSourceExecutionContext(self, executionContext, getType=SourceGetType.NEW, countLast=1, eventDriven=False):
+        # type: (CFGIExecutionContext, SourceGetType, int, bool) -> CFGISourceManaged
+        """
+        create source and bind it to this execution context
+        add source to end of current list (order = max_order + 1)
+        created ContextSourceType is EXECUTION_CONTEXT
+
+        :param CFGIExecutionContext executionContext: execution context source.
+        :param SourceGetType getType:   type of get commands from source.  default NEW.
+        :param int countLast:   only for ContextSourceGetType.LAST. minimum 1. default 1.
+        :param bool eventDriven:   if true, then source is event driven. default is false.
+        """
+        pass
+
+    @abstractmethod
+    def createSourceValue(self, value):
+        # type: (object) -> CFGISourceManaged
+        """
+        create source and bind it to this execution context
+        add source to end of current list (order = max_order + 1)
+        created ContextSourceType is STATIC_VALUE
+
+        :param object value: str, number or byte array.
+        """
+        pass
+
+    @abstractmethod
+    def createSource(self):
+        # type: () -> CFGISourceManaged
+        """
+        create source and bind it to this execution context
+        add source to end of list (order = max_order + 1)
+        created ContextSourceType is MULTIPART
+        """
+        pass
+
+    @abstractmethod
+    def removeSource(self, id):
+        # type: (int) -> None
+        """
+        remove source from list
+
+        :param int id:          serial number in the list of sources
+        """
+        pass
+
+    @abstractmethod
+    def getSourceListManaged(self, id):
+        # type: (int) -> Optional[CFGISourceListManaged]
+        """
+        get managed source list
+
+        :param int id:          serial number in the list of sources
+        :returns:
+            - CFGISourceListManaged - if exist
+            - None - if not find
+        """
+        pass
+
+    @abstractmethod
+    def getSourceManaged(self, id):
+        # type: (int) -> Optional[CFGISourceManaged]
+        """
+        get managed source
+
+        :param int id:          serial number in the list of sources
+        :returns:
+            - CFGISourceManaged - if exist
+            - None - if not find
+        """
+        pass
+
+
+class CFGIConfiguration:
+    """Interface for Module Configuration"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def getModule(self):
+        # type: () -> CFGIModule
+        """get module"""
+        pass
+
+    @abstractmethod
+    def getName(self):
+        # type: () -> str
+        """get name"""
+        pass
+
+    @abstractmethod
+    def getDescription(self):
+        # type: () -> str
+        """get description"""
+        pass
+
+    @abstractmethod
+    def getAllSettings(self):
+        # type: () -> Dict[str, str or bytes or int or long or float]
+        """
+        get all settings
+        """
+        pass
+
+    @abstractmethod
+    def getSetting(self, key):
+        # type: (str) -> Optional[IValue]
+        """
+        get setting value
+
+        :param str key:         setting name
+        :returns:
+            - str or bytes or int or long or float - if exist
+            - None - if not find
+        """
+        pass
+
+    @abstractmethod
+    def getAllVariables(self):
+        # type: () -> Dict[str, IValue]
+        """
+        get all variables
+        """
+        pass
+
+    @abstractmethod
+    def getVariable(self, key):
+        # type: (str) -> Optional[IValue]
+        """
+        get variable value
+
+        :param str key:         variable name
+        :returns:
+            - str or bytes or int or long or float - if exist
+            - None - if not find
+        """
+        pass
+
+    @abstractmethod
+    def getBufferSize(self):
+        # type: () -> int
+        """get buffer size"""
+        pass
+
+    @abstractmethod
+    def isEnable(self):
+        # type: () -> bool
+        """is work"""
+        pass
+
+
+class CFGIExecutionContext(CFGISourceList):
+    """Interface for Execution Context"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def getConfiguration(self):
+        # type: () -> CFGIConfiguration
+        """get configuration"""
+        pass
+
+    @abstractmethod
+    def getName(self):
+        # type: () -> str
+        """get name"""
+        pass
+
+    @abstractmethod
+    def getMaxWorkInterval(self):
+        # type: () -> int
+        """
+        get max work interval in milliseconds
+        if -1, no time limit
+        """
+        pass
+
+    @abstractmethod
+    def isEnable(self):
+        # type: () -> bool
+        """is work"""
+        pass
+
+
+class CFGIExecutionContextManaged(CFGIExecutionContext, CFGISourceListManaged):
+    """Interface for Managed Execution Context"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def setName(self, name):
+        # type: (str) -> None
+        """
+        change name
+
+        :param str name:        unique name for configuration
+        """
+        pass
+
+    @abstractmethod
+    def setMaxWorkInterval(self, maxWorkInterval):
+        # type: (int) -> None
+        """
+        change max work interval
+
+        :param int maxWorkInterval: if -1, no time limit. in milliseconds
+        """
+        pass
+
+    @abstractmethod
+    def setEnable(self, enable):
+        # type: (bool) -> None
+        """
+        enable or disable
+
+        :param bool enable:     true for enable
+        """
+        pass
+
+    @abstractmethod
+    def countExecutionContexts(self):
+        # type: () -> int
+        """
+        count execution contexts
+        """
+        pass
+
+    @abstractmethod
+    def getExecutionContext(self, id):
+        # type: (int) -> Optional[CFGIExecutionContext]
+        """
+        get execution context
+
+        :param int id:          serial number in the list of Execution Contexts
+        :returns:
+            - CFGIExecutionContext - if exist
+            - None - if not find
+        """
+        pass
+
+    @abstractmethod
+    def insertExecutionContext(self, id, executionContext):
+        # type: (int, CFGIExecutionContext) -> None
+        """
+        insert execution context in list
+        Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
+
+        :param int id:          serial number in the list of Execution Contexts
+        :param CFGIExecutionContext executionContext:   execution context
+        """
+        pass
+
+    @abstractmethod
+    def removeExecutionContext(self, id):
+        # type: (int) -> None
+        """
+        remove execution context from list
+
+        :param int id:          serial number in the list of Execution Contexts
+        """
+        pass
+
+    @abstractmethod
+    def countManagedConfigurations(self):
+        # type: () -> int
+        """
+        count managed configurations
+        """
+        pass
+
+    @abstractmethod
+    def getManagedConfiguration(self, id):
+        # type: (int) -> Optional[CFGIConfiguration]
+        """
+        get managed configuration
+
+        :param int id:          serial number in the list of Managed configurations
+        :returns:
+            - CFGIConfiguration - if exist
+            - None - if not find
+       """
+        pass
+
+    @abstractmethod
+    def insertManagedConfiguration(self, id, configuration):
+        # type: (int, CFGIConfiguration) -> None
+        """
+        insert configuration in list
+        Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
+
+        :param int id:          serial number in the list of Managed configurations
+        :param CFGIConfiguration configuration: configuration
+        """
+        pass
+
+    @abstractmethod
+    def removeManagedConfiguration(self, id):
+        # type: (int) -> None
+        """
+        remove configuration from list
+
+        :param int id:          serial number in the list of Managed configurations
+        """
+        pass
+
+
+class CFGIConfigurationManaged(CFGIConfiguration):
+    """Interface for Managed Module Configuration"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def setName(self, name):
+        # type: (str) -> None
+        """
+        change name
+
+        :param str name:        unique name for container
+        """
+        pass
+
+    @abstractmethod
+    def setSetting(self, key, value):
+        # type: (str, object) -> None
+        """
+        change setting
+
+        :param str key:         setting name
+        :param object value:    value object (string, number, bytes)
+        """
+        pass
+
+    @abstractmethod
+    def setVariable(self, key, value):
+        # type: (str, object) -> None
+        """
+        change variable
+
+        :param str key:         variable name
+        :param str or bytes or int or long or float value:    value object
+        """
+        pass
+
+    @abstractmethod
+    def removeVariable(self, key):
+        # type: (str) -> None
+        """
+        remove variable
+
+        :param str key:         variable name
+        """
+        pass
+
+    @abstractmethod
+    def setBufferSize(self, bufferSize):
+        # type: (int) -> None
+        """
+        change buffer size
+
+        :param int bufferSize:  1 is minimum
+        """
+        pass
+
+    @abstractmethod
+    def setEnable(self, enable):
+        # type: (bool) -> None
+        """
+        enable or disable
+
+        :param bool enable:     true for enable
+        """
+        pass
+
+    @abstractmethod
+    def countExecutionContexts(self):
+        # type: () -> int
+        """
+        count execution contexts
+        """
+        pass
+
+    @abstractmethod
+    def getExecutionContext(self, id):
+        # type: (int) -> Optional[CFGIExecutionContextManaged]
+        """
+        get execution context
+
+        :param int id:         serial number in the list of Execution Contexts
+        :returns:
+            - CFGIExecutionContextManaged - if exist
+            - None - if not find
+        """
+        pass
+
+    @abstractmethod
+    def createExecutionContext(self, name, maxWorkInterval=-1):
+        # type: (str, int) -> CFGIExecutionContextManaged
+        """
+        create execution context and bind it to this configuration
+
+        :param str name:        unique name for configuration
+        :param int maxWorkInterval: max work interval. if -1, no time limit. in milliseconds. default is -1
+        """
+        pass
+
+    @abstractmethod
+    def removeExecutionContext(self, id):
+        # type: (int) -> None
+        """
+        delete execution context
+
+        :param int id:          serial number in the list of Execution Contexts
+        """
+        pass
+
+    @abstractmethod
+    def getContainer(self):
+        # type: () -> CFGIContainerManaged
+        """
+        get container
+        """
+        pass
+
+
 class FileTool:
     """tool for work with unmodifiable files"""
 
@@ -1101,7 +1154,7 @@ class ConfigurationTool(CFGIConfiguration):
         change variable
 
         :param str key:                         variable name
-        :param str or bytes or INumber value:   value object ()
+        :param str or bytes or int or long or float value:   value object ()
         """
         pass
 
@@ -1176,120 +1229,6 @@ class ConfigurationTool(CFGIConfiguration):
         :param int freeDays:         free trial days. 0 or more.
         :returns bool - true if has license
         """
-        pass
-
-
-class ExecutionContextTool(CFGIExecutionContext):
-    """main execution context tool"""
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def addMessage(self, value):
-        # type: (object) -> None
-        """
-        emit message
-
-        :param object value:    object (string, number, bytes)
-        """
-        pass
-
-    @abstractmethod
-    def addError(self, value):
-        # type: (object) -> None
-        """
-        emit error message
-
-        :param object value:    object (string, number, bytes)
-        """
-        pass
-
-    @abstractmethod
-    def countCommands(self, sourceId):
-        # type: (int) -> int
-        """
-        get count commands in source
-
-        :param int sourceId     serial number in the list of Sources
-        """
-        pass
-
-    @abstractmethod
-    def countCommandsFromExecutionContext(self, executionContext):
-        # type: (CFGIExecutionContextManaged) -> int
-        """
-        get count commands (all) for managed execution context
-
-        :param CFGIExecutionContextManaged executionContext:    managed execution context
-        """
-        pass
-
-    @abstractmethod
-    def getMessages(self, sourceId, fromIndex=-1, toIndex=-1):
-        # type: (int, int, int) -> List[IAction]
-        """
-        get Process Actions from source (only DATA messages)
-        Returns a view of the portion of this list between the specified fromIndex, inclusive, and toIndex, exclusive.
-
-        :param int sourceId     serial number in the list of Sources
-        :param int fromIndex    start serial number in the list of commands in source (exclusive). if -1 then get all
-        :param int toIndex      end serial number in the list of commands in source (inclusive). if -1 then get all
-        """
-        pass
-
-    @abstractmethod
-    def getCommands(self, sourceId, fromIndex=-1, toIndex=-1):
-        # type: (int, int, int) -> List[ICommand]
-        """
-        get Commands from source
-        Returns a view of the portion of this list between the specified fromIndex, inclusive, and toIndex, exclusive.
-
-        :param int sourceId     serial number in the list of Sources
-        :param int fromIndex    start serial number in the list of commands in source (exclusive). if -1 then get all
-        :param int toIndex      end serial number in the list of commands in source (inclusive). if -1 then get all
-        """
-        pass
-
-    @abstractmethod
-    def getCommandsFromExecutionContext(self, executionContext, fromIndex=-1, toIndex=-1):
-        # type: (CFGIExecutionContextManaged, int, int) -> List[ICommand]
-        """
-        get Commands from managed execution context
-        Returns a view of the portion of this list between the specified fromIndex, inclusive, and toIndex, exclusive.
-
-        :param CFGIExecutionContextManaged executionContext:    managed execution context
-        :param int fromIndex:   start serial number in the list of commands in source (exclusive). if -1 then get all
-        :param int toIndex:     end serial number in the list of commands in source (inclusive). if -1 then get all
-        """
-        pass
-
-    @abstractmethod
-    def isError(self, action):
-        # type: (IAction) -> bool
-        """
-        is Process Actions has errors
-
-        :param IAction action: action
-        """
-        pass
-
-    @abstractmethod
-    def getConfigurationControlTool(self):
-        # type: () -> ConfigurationControlTool
-        """get tool for work with managed configurations"""
-        pass
-
-    @abstractmethod
-    def getFlowControlTool(self):
-        # type: () -> FlowControlTool
-        """get tool for throw new command to managed execution contexts and get result"""
-        pass
-
-    @abstractmethod
-    def isNeedStop(self):
-        # type: () -> bool
-        """check is need stop process work immediately
-        usefull for long work (example - web server)"""
         pass
 
 
@@ -1447,4 +1386,118 @@ class FlowControlTool:
 
         return CFGIExecutionContext or None
         """
+        pass
+
+
+class ExecutionContextTool(CFGIExecutionContext):
+    """main execution context tool"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def addMessage(self, value):
+        # type: (object) -> None
+        """
+        emit message
+
+        :param object value:    object (string, number, bytes)
+        """
+        pass
+
+    @abstractmethod
+    def addError(self, value):
+        # type: (object) -> None
+        """
+        emit error message
+
+        :param object value:    object (string, number, bytes)
+        """
+        pass
+
+    @abstractmethod
+    def countCommands(self, sourceId):
+        # type: (int) -> int
+        """
+        get count commands in source
+
+        :param int sourceId     serial number in the list of Sources
+        """
+        pass
+
+    @abstractmethod
+    def countCommandsFromExecutionContext(self, executionContext):
+        # type: (CFGIExecutionContextManaged) -> int
+        """
+        get count commands (all) for managed execution context
+
+        :param CFGIExecutionContextManaged executionContext:    managed execution context
+        """
+        pass
+
+    @abstractmethod
+    def getMessages(self, sourceId, fromIndex=-1, toIndex=-1):
+        # type: (int, int, int) -> List[IAction]
+        """
+        get Process Actions from source (only DATA messages)
+        Returns a view of the portion of this list between the specified fromIndex, inclusive, and toIndex, exclusive.
+
+        :param int sourceId     serial number in the list of Sources
+        :param int fromIndex    start serial number in the list of commands in source (exclusive). if -1 then get all
+        :param int toIndex      end serial number in the list of commands in source (inclusive). if -1 then get all
+        """
+        pass
+
+    @abstractmethod
+    def getCommands(self, sourceId, fromIndex=-1, toIndex=-1):
+        # type: (int, int, int) -> List[ICommand]
+        """
+        get Commands from source
+        Returns a view of the portion of this list between the specified fromIndex, inclusive, and toIndex, exclusive.
+
+        :param int sourceId     serial number in the list of Sources
+        :param int fromIndex    start serial number in the list of commands in source (exclusive). if -1 then get all
+        :param int toIndex      end serial number in the list of commands in source (inclusive). if -1 then get all
+        """
+        pass
+
+    @abstractmethod
+    def getCommandsFromExecutionContext(self, executionContext, fromIndex=-1, toIndex=-1):
+        # type: (CFGIExecutionContextManaged, int, int) -> List[ICommand]
+        """
+        get Commands from managed execution context
+        Returns a view of the portion of this list between the specified fromIndex, inclusive, and toIndex, exclusive.
+
+        :param CFGIExecutionContextManaged executionContext:    managed execution context
+        :param int fromIndex:   start serial number in the list of commands in source (exclusive). if -1 then get all
+        :param int toIndex:     end serial number in the list of commands in source (inclusive). if -1 then get all
+        """
+        pass
+
+    @abstractmethod
+    def isError(self, action):
+        # type: (IAction) -> bool
+        """
+        is Process Actions has errors
+
+        :param IAction action: action
+        """
+        pass
+
+    @abstractmethod
+    def getConfigurationControlTool(self):
+        # type: () -> ConfigurationControlTool
+        """get tool for work with managed configurations"""
+        pass
+
+    @abstractmethod
+    def getFlowControlTool(self):
+        # type: () -> FlowControlTool
+        """get tool for throw new command to managed execution contexts and get result"""
+        pass
+
+    @abstractmethod
+    def isNeedStop(self):
+        # type: () -> bool
+        """check is need stop process work immediately
+        usefull for long work (example - web server)"""
         pass
