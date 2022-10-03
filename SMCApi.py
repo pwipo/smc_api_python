@@ -2,10 +2,7 @@ import datetime
 
 from abc import ABCMeta, abstractmethod
 from enum import Enum
-from typing import List, Dict
-
-
-# from typing import Dict, List
+from typing import List, Dict, Optional
 
 
 class ModuleException(Exception):
@@ -287,7 +284,7 @@ class CFGIContainerManaged(CFGIContainer):
 
     @abstractmethod
     def getConfiguration(self, id):
-        # type: (int) -> CFGIConfiguration
+        # type: (int) -> Optional[CFGIConfiguration]
         """
         get child configuration
 
@@ -308,7 +305,7 @@ class CFGIContainerManaged(CFGIContainer):
 
     @abstractmethod
     def getManagedConfiguration(self, id):
-        # type: (int) -> CFGIConfigurationManaged
+        # type: (int) -> Optional[CFGIConfigurationManaged]
         """
         get child managed configuration
 
@@ -329,7 +326,7 @@ class CFGIContainerManaged(CFGIContainer):
 
     @abstractmethod
     def getContainer(self, id):
-        # type: (int) -> CFGIContainer
+        # type: (int) -> Optional[CFGIContainer]
         """
         get child container
 
@@ -394,7 +391,7 @@ class CFGIConfiguration:
 
     @abstractmethod
     def getSetting(self, key):
-        # type: (str) -> IValue
+        # type: (str) -> Optional[IValue]
         """
         get setting value
 
@@ -415,7 +412,7 @@ class CFGIConfiguration:
 
     @abstractmethod
     def getVariable(self, key):
-        # type: (str) -> IValue
+        # type: (str) -> Optional[IValue]
         """
         get variable value
 
@@ -516,7 +513,7 @@ class CFGIConfigurationManaged(CFGIConfiguration):
 
     @abstractmethod
     def getExecutionContext(self, id):
-        # type: (int) -> CFGIExecutionContextManaged
+        # type: (int) -> Optional[CFGIExecutionContextManaged]
         """
         get execution context
 
@@ -572,7 +569,7 @@ class CFGISourceList:
 
     @abstractmethod
     def getSource(self, id):
-        # type: (int) -> CFGISource
+        # type: (int) -> Optional[CFGISource]
         """
         get source
 
@@ -653,7 +650,7 @@ class CFGISourceListManaged(CFGISourceList):
 
     @abstractmethod
     def getSourceListManaged(self, id):
-        # type: (int) -> CFGISourceListManaged
+        # type: (int) -> Optional[CFGISourceListManaged]
         """
         get managed source list
 
@@ -666,7 +663,7 @@ class CFGISourceListManaged(CFGISourceList):
 
     @abstractmethod
     def getSourceManaged(self, id):
-        # type: (int) -> CFGISourceManaged
+        # type: (int) -> Optional[CFGISourceManaged]
         """
         get managed source
 
@@ -756,7 +753,7 @@ class CFGIExecutionContextManaged(CFGIExecutionContext, CFGISourceListManaged):
 
     @abstractmethod
     def getExecutionContext(self, id):
-        # type: (int) -> CFGIExecutionContext
+        # type: (int) -> Optional[CFGIExecutionContext]
         """
         get execution context
 
@@ -799,7 +796,7 @@ class CFGIExecutionContextManaged(CFGIExecutionContext, CFGISourceListManaged):
 
     @abstractmethod
     def getManagedConfiguration(self, id):
-        # type: (int) -> CFGIConfiguration
+        # type: (int) -> Optional[CFGIConfiguration]
         """
         get managed configuration
 
@@ -915,7 +912,7 @@ class CFGISource:
 
     @abstractmethod
     def getFilter(self, id):
-        # type: (int) -> CFGISourceFilter
+        # type: (int) -> Optional[CFGISourceFilter]
         """
         get filter
 
@@ -1151,7 +1148,7 @@ class ConfigurationTool(CFGIConfiguration):
 
     @abstractmethod
     def getExecutionContext(self, id):
-        # type: (int) -> CFGIExecutionContext
+        # type: (int) -> Optional[CFGIExecutionContext]
         """
         get execution context
 
@@ -1315,7 +1312,7 @@ class ConfigurationControlTool:
 
     @abstractmethod
     def getManagedConfiguration(self, id):
-        # type: (int) -> CFGIConfigurationManaged
+        # type: (int) -> Optional[CFGIConfigurationManaged]
         """
         get managed configuration
 
@@ -1442,7 +1439,7 @@ class FlowControlTool:
 
     @abstractmethod
     def getManagedExecutionContext(self, id):
-        # type: (int) -> CFGIExecutionContext
+        # type: (int) -> Optional[CFGIExecutionContext]
         """
         get managed execution context
 
