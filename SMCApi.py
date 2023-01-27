@@ -132,7 +132,7 @@ MessageType.MESSAGE_DATA.value = 1001
 #     DOUBLE = 7
 #     BIG_DECIMAL = 8
 #     BYTES = 9
-ValueType = Enum('STRING', 'BYTE', 'SHORT', 'INTEGER', 'LONG', 'BIG_INTEGER', 'FLOAT', 'DOUBLE', 'BIG_DECIMAL', 'BYTES')
+ValueType = Enum('STRING', 'BYTE', 'SHORT', 'INTEGER', 'LONG', 'BIG_INTEGER', 'FLOAT', 'DOUBLE', 'BIG_DECIMAL', 'BYTES', 'OBJECT_ARRAY')
 ValueType.STRING.value = 0
 ValueType.BYTE.value = 1
 ValueType.SHORT.value = 2
@@ -143,6 +143,7 @@ ValueType.FLOAT.value = 6
 ValueType.DOUBLE.value = 7
 ValueType.BIG_DECIMAL.value = 8
 ValueType.BYTES.value = 9
+ValueType.OBJECT_ARRAY.value = 10
 
 # class SourceType(Enum):
 #     __order__ = 'MODULE_CONFIGURATION EXECUTION_CONTEXT STATIC_VALUE MULTIPART CALLER CALLER_RELATIVE_NAME'
@@ -152,13 +153,14 @@ ValueType.BYTES.value = 9
 #     MULTIPART = 3
 #     CALLER = 4
 #     CALLER_RELATIVE_NAME = 5
-SourceType = Enum('MODULE_CONFIGURATION', 'EXECUTION_CONTEXT', 'STATIC_VALUE', 'MULTIPART', 'CALLER', 'CALLER_RELATIVE_NAME')
+SourceType = Enum('MODULE_CONFIGURATION', 'EXECUTION_CONTEXT', 'STATIC_VALUE', 'MULTIPART', 'CALLER', 'CALLER_RELATIVE_NAME', 'OBJECT_ARRAY')
 SourceType.MODULE_CONFIGURATION.value = 0
 SourceType.EXECUTION_CONTEXT.value = 1
 SourceType.STATIC_VALUE.value = 2
 SourceType.MULTIPART.value = 3
 SourceType.CALLER.value = 4
 SourceType.CALLER_RELATIVE_NAME.value = 5
+SourceType.OBJECT_ARRAY.value = 6
 
 # class SourceGetType(Enum):
 #     __order__ = 'ALL NEW NEW_ALL LAST LAST_ALL'
@@ -180,11 +182,12 @@ SourceGetType.LAST_ALL.value = 4
 #     NUMBER = 1
 #     STRING_EQUAL = 2
 #     STRING_CONTAIN = 3
-SourceFilterType = Enum('POSITION', 'NUMBER', 'STRING_EQUAL', 'STRING_CONTAIN')
+SourceFilterType = Enum('POSITION', 'NUMBER', 'STRING_EQUAL', 'STRING_CONTAIN', 'OBJECT_PATHS')
 SourceFilterType.POSITION.value = 0
 SourceFilterType.NUMBER.value = 1
 SourceFilterType.STRING_EQUAL.value = 2
 SourceFilterType.STRING_CONTAIN.value = 3
+SourceFilterType.OBJECT_PATHS.value = 4
 
 
 class IValue:
@@ -258,6 +261,227 @@ class ICommand:
         # type: () -> CommandType
         """get type"""
         pass
+
+
+# class ObjectType(Enum):
+#     __order__ = 'OBJECT_ARRAY OBJECT_ELEMENT OBJECT_ELEMENT_SIMPLE VALUE_ANY STRING BYTE SHORT INTEGER LONG FLOAT DOUBLE BIG_INTEGER BIG_DECIMAL BYTES'
+#     OBJECT_ARRAY = 0
+#     OBJECT_ELEMENT = 1
+#     OBJECT_ELEMENT_SIMPLE = 2
+#     VALUE_ANY = 3
+#     STRING = 4
+#     BYTE = 5
+#     SHORT = 6
+#     INTEGER = 7
+#     LONG = 8
+#     FLOAT = 9
+#     DOUBLE = 10
+#     BIG_INTEGER = 11
+#     BIG_DECIMAL = 12
+#     BYTES = 13
+ObjectType = Enum('OBJECT_ARRAY', 'OBJECT_ELEMENT', 'VALUE_ANY', 'STRING', 'BYTE', 'SHORT', 'INTEGER', 'LONG', 'FLOAT', 'DOUBLE', 'BIG_INTEGER',
+                  'BIG_DECIMAL', 'BYTES')
+ObjectType.OBJECT_ARRAY.value = 0
+ObjectType.OBJECT_ELEMENT.value = 1
+ObjectType.VALUE_ANY.value = 2
+ObjectType.STRING.value = 3
+ObjectType.BYTE.value = 4
+ObjectType.SHORT.value = 5
+ObjectType.INTEGER.value = 6
+ObjectType.LONG.value = 7
+ObjectType.FLOAT.value = 8
+ObjectType.DOUBLE.value = 9
+ObjectType.BIG_INTEGER.value = 10
+ObjectType.BIG_DECIMAL.value = 11
+ObjectType.BYTES.value = 12
+
+
+class ObjectField(object):
+    def __init__(self, name, value):
+        # type: (str, object) -> None
+        self.name = name
+        self.type = None
+        self.value = None
+        self.setValue(value)
+
+    def setValue(self, value):
+        # type: (object) -> None
+        if value is None:
+            raise ValueError("value is None")
+        self.value = value
+        valueType = type(value)
+        if valueType is ObjectArray:
+            self.type = ObjectType.OBJECT_ARRAY
+        elif valueType is ObjectElement:
+            self.type = ObjectType.OBJECT_ELEMENT
+        elif valueType is ObjectField:
+            self.type = value.getType()
+            self.value = value.getValue()
+        elif valueType is IValue:
+            self.type = ObjectType._values[ObjectType._keys.index(str(value.getType()))]
+            self.value = value.getValue()
+        elif valueType is str or valueType is unicode:
+            self.type = ObjectType.STRING
+        elif valueType is bytearray or valueType is bytes:
+            self.type = ObjectType.BYTES
+        elif valueType is int:
+            self.type = ObjectType.INTEGER
+        elif valueType is long:
+            self.type = ObjectType.LONG
+        elif valueType is float:
+            self.type = ObjectType.DOUBLE
+        else:
+            doubleValueFunc = getattr(value, "doubleValue", None)
+            if callable(doubleValueFunc):
+                self.type = ObjectType.DOUBLE
+                self.value = doubleValueFunc()
+            else:
+                raise ValueError("wrong type {}".format(valueType))
+
+    def getName(self):
+        # type: () -> str
+        return self.name
+
+    def getType(self):
+        # type: () -> ObjectType
+        return self.type
+
+    def getValue(self):
+        # type: () -> object
+        return self.value
+
+    def isSimple(self):
+        # type: () -> bool
+        return ObjectType.OBJECT_ARRAY != self.type and ObjectType.OBJECT_ELEMENT != self.type
+
+    def __str__(self):
+        return "ObjectField[name=%s, type=%s, value=%r]" % (self.name, self.type, self.value)
+
+    def __repr__(self):
+        return "ObjectField[name=%s, type=%s, value=%r]" % (self.name, self.type, self.value)
+
+
+class ObjectElement(object):
+    def __init__(self, fields=None):
+        # type: (List[ObjectField]) -> None
+        if fields is not None:
+            self.fields = list(fields)
+        else:
+            self.fields = []
+
+    def isSimple(self):
+        # type: () -> bool
+        isSimple = True
+        for field in self.fields:
+            if not field.isSimple():
+                isSimple = False
+                break
+        return isSimple
+
+    def findField(self, name):
+        # type: (str) -> Optional[ObjectField]
+        for f in self.fields:
+            if f.name == name:
+                return f
+        return None
+
+    def getFields(self):
+        # type: () -> List[ObjectField]
+        return self.fields
+
+    def __str__(self):
+        return "ObjectElement[fields=%r]" % (self.fields)
+
+    def __repr__(self):
+        return "ObjectElement[fields=%r]" % (self.fields)
+
+
+class ObjectArray(object):
+    def __init__(self, type=ObjectType.OBJECT_ELEMENT, objects=None):
+        # type: (ObjectType, List[object]) -> None
+        self.type = type
+        self.objects = []
+        if objects is not None:
+            for obj in objects:
+                self.add(obj)
+
+    def check(self, obj):
+        # type: (object) -> None
+        if obj is None:
+            raise ValueError("obj is None")
+        valueType = type(obj)
+        if self.type == ObjectType.OBJECT_ARRAY:
+            if valueType is not ObjectArray:
+                raise ValueError("wrong obj type")
+        elif self.type == ObjectType.OBJECT_ELEMENT:
+            if valueType is not ObjectElement:
+                raise ValueError("wrong obj type")
+        elif self.type == ObjectType.VALUE_ANY:
+            if valueType is not str and valueType is not unicode and valueType is not bytearray and valueType is not bytes and valueType is not int and valueType is not long and valueType is not float:
+                raise ValueError("wrong obj type")
+        elif self.type == ObjectType.STRING:
+            if valueType is not str or valueType is not unicode:  # not isinstance(obj, basestring)
+                raise ValueError("wrong obj type")
+        elif self.type == ObjectType.BYTES:
+            if valueType is not bytearray or valueType is not bytes:
+                raise ValueError("wrong obj type")
+        elif self.type == ObjectType.INTEGER:
+            if valueType is not int:
+                raise ValueError("wrong obj type")
+        elif self.type == ObjectType.LONG:
+            if valueType is not long:
+                raise ValueError("wrong obj type")
+        elif self.type == ObjectType.DOUBLE:
+            if valueType is not float:
+                raise ValueError("wrong obj type")
+        else:
+            raise ValueError("wrong obj type")
+
+    def add(self, obj):
+        # type: (object) -> None
+        valueType = type(obj)
+        if valueType is ObjectField:
+            obj = obj.getValue()
+        elif valueType is IValue:
+            obj = obj.getValue()
+        self.check(obj)
+        self.objects.append(obj)
+
+    def set(self, id, obj):
+        # type: (int, object) -> None
+        valueType = type(obj)
+        if valueType is ObjectField:
+            obj = obj.getValue()
+        elif valueType is IValue:
+            obj = obj.getValue()
+        self.check(obj)
+        self.objects[id] = obj
+
+    def get(self, id):
+        # type: (int) -> object
+        return self.objects[id]
+
+    def size(self):
+        # type: () -> int
+        return len(self.objects)
+
+    def remove(self, id):
+        # type: (int) -> None
+        del self.objects[id]
+
+    def getType(self):
+        # type: () -> ObjectType
+        return self.type
+
+    def isSimple(self):
+        # type: () -> bool
+        return ObjectType.OBJECT_ARRAY != self.type and ObjectType.OBJECT_ELEMENT != self.type
+
+    def __str__(self):
+        return "ObjectArray[type=%s, objects=%r]" % (self.type, self.objects)
+
+    def __repr__(self):
+        return "ObjectArray[type=%s, objects=%r]" % (self.type, self.objects)
 
 
 class CFGIModule:
@@ -513,8 +737,8 @@ class CFGISourceManaged(CFGISource):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def createFilterPosition(self, range, period=0, countPeriods=0, startOffset=0):
-        # type: (List[int], int, int, int) -> CFGISourceFilter
+    def createFilterPosition(self, range, period=0, countPeriods=0, startOffset=0, forObject=False):
+        # type: (List[int], int, int, int, bool) -> CFGISourceFilter
         """
         Create position filter and bind it to this source
         add filter to end of current list (order = max_order + 1)
@@ -524,25 +748,27 @@ class CFGISourceManaged(CFGISource):
         :param int period:          period length, if greater than zero, then defines the set within which the previous list values apply
         :param int countPeriods:    determines the number of periods
         :param int startOffset:     before the first period
+        :param bool forObject:      if true - used for ObjectArrays, overwise for all values
         """
         pass
 
     @abstractmethod
-    def createFilterNumber(self, min, max):
-        # type: (int, int) -> CFGISourceFilter
+    def createFilterNumber(self, min, max, fieldName=None):
+        # type: (int, int, str) -> CFGISourceFilter
         """
         Create number filter and bind it to this source
         add filter to end of current list (order = max_order + 1)
         only for MODULE_CONFIGURATION and EXECUTION_CONTEXT SourceType
 
-        :param int min:    inclusive
-        :param int max:    inclusive
+        :param int min:             inclusive
+        :param int max:             inclusive
+        :param str fieldName:       field name in ObjectArray. if empty used for simple values, overwise for ObjectArrays.
         """
         pass
 
     @abstractmethod
-    def createFilterStrEq(self, needEquals, value):
-        # type: (bool, str) -> CFGISourceFilter
+    def createFilterStrEq(self, needEquals, value, fieldName=None):
+        # type: (bool, str, str) -> CFGISourceFilter
         """
         Create string equal filter and bind it to this source
         add filter to end of current list (order = max_order + 1)
@@ -550,12 +776,13 @@ class CFGISourceManaged(CFGISource):
 
         :param bool needEquals:     if true then need equals, also, not equal
         :param str value:           value for compare
+        :param str fieldName:       field name in ObjectArray. if empty used for simple values, overwise for ObjectArrays.
         """
         pass
 
     @abstractmethod
-    def createFilterStrContain(self, needContain, value):
-        # type: (bool, str) -> CFGISourceFilter
+    def createFilterStrContain(self, needContain, value, fieldName=None):
+        # type: (bool, str, str) -> CFGISourceFilter
         """
         Create string contain filter and bind it to this source
         add filter to end of current list (order = max_order + 1)
@@ -563,6 +790,89 @@ class CFGISourceManaged(CFGISource):
 
         :param bool needContain:    if true then need equals, also, not equal
         :param str value:           value for compare
+        :param str fieldName:       field name in ObjectArray. if empty used for simple values, overwise for ObjectArrays.
+        """
+        pass
+
+    @abstractmethod
+    def createFilterObjectPaths(self, paths):
+        # type: (List[str]) -> CFGISourceFilter
+        """
+        Create string contain filter and bind it to this source
+        add filter to end of current list (order = max_order + 1)
+        only for MODULE_CONFIGURATION and EXECUTION_CONTEXT SourceType
+
+        :param List[str] paths:     object array paths. path - dot separated names.
+        """
+        pass
+
+    @abstractmethod
+    def updateFilterPosition(self, id, range, period=0, countPeriods=0, startOffset=0, forObject=False):
+        # type: (int, List[int], int, int, int, bool) -> CFGISourceFilter
+        """
+        Update Position filter in list
+        only for MODULE_CONFIGURATION and EXECUTION_CONTEXT SourceType
+
+        :param int id:              serial number in the list
+        :param List[int] range:     n*2 elements: from - inclusive and to - exclusive for range or position and null
+        :param int period:          period length, if greater than zero, then defines the set within which the previous list values apply
+        :param int countPeriods:    determines the number of periods
+        :param int startOffset:     before the first period
+        :param bool forObject:      if true - used for ObjectArrays, overwise for all values
+        """
+        pass
+
+    @abstractmethod
+    def updateFilterNumber(self, id, min, max, fieldName=None):
+        # type: (int, int, int, str) -> CFGISourceFilter
+        """
+        Update Number filter in list
+        only for MODULE_CONFIGURATION and EXECUTION_CONTEXT SourceType
+
+        :param int id:              serial number in the list
+        :param int min:             inclusive
+        :param int max:             inclusive
+        :param str fieldName:       field name in ObjectArray. if empty used for simple values, overwise for ObjectArrays.
+        """
+        pass
+
+    @abstractmethod
+    def updateFilterStrEq(self, id, needEquals, value, fieldName=None):
+        # type: (int, bool, str, str) -> CFGISourceFilter
+        """
+        Update Str Eq filter in list
+        only for MODULE_CONFIGURATION and EXECUTION_CONTEXT SourceType
+
+        :param int id:              serial number in the list
+        :param bool needEquals:     if true then need equals, also, not equal
+        :param str value:           value for compare
+        :param str fieldName:       field name in ObjectArray. if empty used for simple values, overwise for ObjectArrays.
+        """
+        pass
+
+    @abstractmethod
+    def updateFilterStrContain(self, id, needContain, value, fieldName=None):
+        # type: (int, bool, str, str) -> CFGISourceFilter
+        """
+        Update Str Contain filter in list
+        only for MODULE_CONFIGURATION and EXECUTION_CONTEXT SourceType
+
+        :param int id:              serial number in the list
+        :param bool needContain:    if true then need equals, also, not equal
+        :param str value:           value for compare
+        :param str fieldName:       field name in ObjectArray. if empty used for simple values, overwise for ObjectArrays.
+        """
+        pass
+
+    @abstractmethod
+    def updateFilterObjectPaths(self, id, paths):
+        # type: (int, List[str]) -> CFGISourceFilter
+        """
+        Update Object Paths filter in list
+        only for MODULE_CONFIGURATION and EXECUTION_CONTEXT SourceType
+
+        :param int id:              serial number in the list
+        :param List[str] paths:     object array paths. path - dot separated names.
         """
         pass
 
@@ -658,6 +968,74 @@ class CFGISourceListManaged(CFGISourceList):
         create source and bind it to this execution context
         add source to end of list (order = max_order + 1)
         created ContextSourceType is MULTIPART
+        """
+        pass
+
+    @abstractmethod
+    def createSourceObjectArray(self, value, fields):
+        # type: (ObjectArray, List[str]) -> CFGISourceManaged
+        """
+        create source and bind it to this execution context
+        add source to end of current list (order = max_order + 1)
+        created ContextSourceType is OBJECT_ARRAY
+
+        :param ObjectArray value: value.
+        :param List[str] fields: list of field (comma separated list of paths).
+        """
+        pass
+
+    @abstractmethod
+    def updateSourceConfiguration(self, id, configuration, getType=SourceGetType.NEW, countLast=1, eventDriven=False):
+        # type: (int, CFGIConfiguration, SourceGetType, int, bool) -> CFGISourceManaged
+        """
+        update source
+        ContextSourceType is MODULE_CONFIGURATION
+
+        :param int id:          serial number in the list of sources
+        :param CFGIConfiguration configuration: configuration source.
+        :param SourceGetType getType:   type of get commands from source.  default NEW.
+        :param int countLast:   only for ContextSourceGetType.LAST. minimum 1. default 1.
+        :param bool eventDriven:   if true, then source is event driven. default is false.
+        """
+        pass
+
+    @abstractmethod
+    def updateSourceExecutionContext(self, id, executionContext, getType=SourceGetType.NEW, countLast=1, eventDriven=False):
+        # type: (int, CFGIExecutionContext, SourceGetType, int, bool) -> CFGISourceManaged
+        """
+        update source
+        ContextSourceType is EXECUTION_CONTEXT
+
+        :param int id:          serial number in the list of sources
+        :param CFGIExecutionContext executionContext: execution context source.
+        :param SourceGetType getType:   type of get commands from source.  default NEW.
+        :param int countLast:   only for ContextSourceGetType.LAST. minimum 1. default 1.
+        :param bool eventDriven:   if true, then source is event driven. default is false.
+        """
+        pass
+
+    @abstractmethod
+    def updateSourceValue(self, id, value):
+        # type: (int, object) -> CFGISourceManaged
+        """
+        update source
+        ContextSourceType is OBJECT_ARRAY
+
+        :param int id:          serial number in the list of sources
+        :param object value: str, number or byte array.
+        """
+        pass
+
+    @abstractmethod
+    def updateSourceObjectArray(self, id, value, fields):
+        # type: (int, ObjectArray, List[str]) -> CFGISourceManaged
+        """
+        update source
+        ContextSourceType is STATIC_VALUE
+
+        :param int id:          serial number in the list of sources
+        :param ObjectArray value: value.
+        :param List[str] fields: list of field (comma separated list of paths).
         """
         pass
 
@@ -878,6 +1256,17 @@ class CFGIExecutionContextManaged(CFGIExecutionContext, CFGISourceListManaged):
         pass
 
     @abstractmethod
+    def updateExecutionContext(self, id, executionContext):
+        # type: (int, CFGIExecutionContext) -> None
+        """
+        update execution context in list
+
+        :param int id:          serial number in the list of Execution Contexts
+        :param CFGIExecutionContext executionContext:   execution context
+        """
+        pass
+
+    @abstractmethod
     def removeExecutionContext(self, id):
         # type: (int) -> None
         """
@@ -914,6 +1303,17 @@ class CFGIExecutionContextManaged(CFGIExecutionContext, CFGISourceListManaged):
         """
         insert configuration in list
         Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
+
+        :param int id:          serial number in the list of Managed configurations
+        :param CFGIConfiguration configuration: configuration
+        """
+        pass
+
+    @abstractmethod
+    def updateManagedConfiguration(self, id, configuration):
+        # type: (int, CFGIConfiguration) -> None
+        """
+        update configuration in list
 
         :param int id:          serial number in the list of Managed configurations
         :param CFGIConfiguration configuration: configuration
@@ -1026,6 +1426,18 @@ class CFGIConfigurationManaged(CFGIConfiguration):
         create execution context and bind it to this configuration
 
         :param str name:        unique name for configuration
+        :param int maxWorkInterval: max work interval. if -1, no time limit. in milliseconds. default is -1
+        """
+        pass
+
+    @abstractmethod
+    def updateExecutionContext(self, id, name, maxWorkInterval=-1):
+        # type: (int, str, int) -> CFGIExecutionContextManaged
+        """
+        update execution context
+
+        :param int id:              serial number in the list of Execution Contexts
+        :param str name:            unique name for configuration
         :param int maxWorkInterval: max work interval. if -1, no time limit. in milliseconds. default is -1
         """
         pass
