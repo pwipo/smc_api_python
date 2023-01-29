@@ -1148,6 +1148,12 @@ class CFGIConfiguration:
         pass
 
     @abstractmethod
+    def getThreadBufferSize(self):
+        # type: () -> int
+        """get thread buffer size"""
+        pass
+
+    @abstractmethod
     def isEnable(self):
         # type: () -> bool
         """is work"""
@@ -1384,7 +1390,17 @@ class CFGIConfigurationManaged(CFGIConfiguration):
         """
         change buffer size
 
-        :param int bufferSize:  1 is minimum
+        :param int bufferSize:  0 is minimum
+        """
+        pass
+
+    @abstractmethod
+    def setThreadBufferSize(self, threadBufferSize):
+        # type: (int) -> None
+        """
+        change thread buffer size
+
+        :param int threadBufferSize:  1 is minimum
         """
         pass
 
