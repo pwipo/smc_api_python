@@ -75,6 +75,7 @@ CommandType.STOP.value = 3
 #
 #     MESSAGE_ERROR_TYPE = 1000
 #     MESSAGE_DATA = 1001
+#     MESSAGE_LOG = 1002
 MessageType = Enum('MESSAGE_PROCESS_STATE_CHANGE', 'MESSAGE_ACTION_START', 'MESSAGE_ACTION_STOP', 'MESSAGE_ACTION_ERROR'
                    , 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_SETTING_UPDATE', 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_UPDATE'
                    , 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_REMOVE', 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_CREATE'
@@ -88,7 +89,7 @@ MessageType = Enum('MESSAGE_PROCESS_STATE_CHANGE', 'MESSAGE_ACTION_START', 'MESS
                    , 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_START', 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_EXECUTE'
                    , 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_UPDATE', 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_STOP'
                    , 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS', 'MESSAGE_ERROR_TYPE'
-                   , 'MESSAGE_DATA'
+                   , 'MESSAGE_DATA', 'MESSAGE_LOG'
                    )
 MessageType.MESSAGE_PROCESS_STATE_CHANGE.value = 1
 MessageType.MESSAGE_ACTION_START.value = 4
@@ -119,6 +120,7 @@ MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_STOP.value = 227
 MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS.value = 228
 MessageType.MESSAGE_ERROR_TYPE.value = 1000
 MessageType.MESSAGE_DATA.value = 1001
+MessageType.MESSAGE_LOG.value = 1002
 
 # class ValueType(Enum):
 #     __order__ = 'STRING BYTE SHORT INTEGER LONG BIG_INTEGER FLOAT DOUBLE BIG_DECIMAL BYTES'
@@ -1159,6 +1161,12 @@ class CFGIConfiguration:
         """is work"""
         pass
 
+    @abstractmethod
+    def isActive(self):
+        # type: () -> bool
+        """check is configuration work now (process execute any commands)"""
+        pass
+
 
 class CFGIExecutionContext(CFGISourceList):
     """Interface for Execution Context"""
@@ -1190,6 +1198,12 @@ class CFGIExecutionContext(CFGISourceList):
     def isEnable(self):
         # type: () -> bool
         """is work"""
+        pass
+
+    @abstractmethod
+    def isActive(self):
+        # type: () -> bool
+        """check is context work now (execute any command)"""
         pass
 
 
@@ -1663,6 +1677,56 @@ class ConfigurationTool(CFGIConfiguration):
         """
         pass
 
+    @abstractmethod
+    def loggerTrace(self, text):
+        # type: (str) -> None
+        """
+        logger trace
+
+        :param int text:         text
+        """
+        pass
+
+    @abstractmethod
+    def loggerDebug(self, text):
+        # type: (str) -> None
+        """
+        logger debug
+
+        :param int text:         text
+        """
+        pass
+
+    @abstractmethod
+    def loggerInfo(self, text):
+        # type: (str) -> None
+        """
+        logger info
+
+        :param int text:         text
+        """
+        pass
+
+    @abstractmethod
+    def loggerWarn(self, text):
+        # type: (str) -> None
+        """
+        logger warn
+
+        :param int text:         text
+        """
+        pass
+
+    @abstractmethod
+    def loggerError(self, text):
+        # type: (str) -> None
+        """
+        logger error
+
+        :param int text:         text
+        """
+        pass
+
 
 class ConfigurationControlTool:
     """Tool for work with managed configurations"""
@@ -1843,6 +1907,16 @@ class ExecutionContextTool(CFGIExecutionContext):
         emit error message
 
         :param object value:    object (string, number, bytes)
+        """
+        pass
+
+    @abstractmethod
+    def addLog(self, value):
+        # type: (str) -> None
+        """
+        emit log message
+
+        :param string value:    string
         """
         pass
 
