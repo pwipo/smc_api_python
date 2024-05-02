@@ -3,10 +3,11 @@ created by Nikolay V. Ulyanov (ulianownv@mail.ru)
 http://www.smcsystem.ru
 """
 import datetime
+from __builtin__ import long, unicode
 from abc import ABCMeta, abstractmethod
+from typing import List, Dict, Optional
 
 from enum import Enum
-from typing import List, Dict, Optional
 
 
 class ModuleException(Exception):
@@ -42,85 +43,85 @@ CommandType.UPDATE.value = 2
 CommandType.STOP.value = 3
 
 # class MessageType(Enum):
-#     MESSAGE_PROCESS_STATE_CHANGE = 1
+#     PROCESS_STATE_CHANGE = 1
 #
-#     MESSAGE_ACTION_START = 4
-#     MESSAGE_ACTION_STOP = 6
-#     MESSAGE_ACTION_ERROR = 7
+#     ACTION_START = 4
+#     ACTION_STOP = 6
+#     ACTION_ERROR = 7
 #
-#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_SETTING_UPDATE = 108
-#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_UPDATE = 109
-#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_REMOVE = 110
-#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_CREATE = 111
-#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_UPDATE = 112
-#     MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_REMOVE = 113
-#     MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_CREATE = 114
-#     MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_UPDATE = 115
-#     MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_REMOVE = 116
-#     MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_CREATE = 117
-#     MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_UPDATE = 118
-#     MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_REMOVE = 119
-#     MESSAGE_CONFIGURATION_CONTROL_CONTAINER_CREATE = 120
-#     MESSAGE_CONFIGURATION_CONTROL_CONTAINER_REMOVE = 121
+#     CONFIGURATION_CONTROL_CONFIGURATION_SETTING_UPDATE = 108
+#     CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_UPDATE = 109
+#     CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_REMOVE = 110
+#     CONFIGURATION_CONTROL_CONFIGURATION_CREATE = 111
+#     CONFIGURATION_CONTROL_CONFIGURATION_UPDATE = 112
+#     CONFIGURATION_CONTROL_CONFIGURATION_REMOVE = 113
+#     CONFIGURATION_CONTROL_EXECUTION_CONTEXT_CREATE = 114
+#     CONFIGURATION_CONTROL_EXECUTION_CONTEXT_UPDATE = 115
+#     CONFIGURATION_CONTROL_EXECUTION_CONTEXT_REMOVE = 116
+#     CONFIGURATION_CONTROL_SOURCE_CONTEXT_CREATE = 117
+#     CONFIGURATION_CONTROL_SOURCE_CONTEXT_UPDATE = 118
+#     CONFIGURATION_CONTROL_SOURCE_CONTEXT_REMOVE = 119
+#     CONFIGURATION_CONTROL_CONTAINER_CREATE = 120
+#     CONFIGURATION_CONTROL_CONTAINER_REMOVE = 121
 #
-#     MESSAGE_FLOW_CONTROL_EXECUTE_NOW_START = 220
-#     MESSAGE_FLOW_CONTROL_EXECUTE_NOW_EXECUTE = 221
-#     MESSAGE_FLOW_CONTROL_EXECUTE_NOW_UPDATE = 222
-#     MESSAGE_FLOW_CONTROL_EXECUTE_NOW_STOP = 223
-#     MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_START = 224
-#     MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_EXECUTE = 225
-#     MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_UPDATE = 226
-#     MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_STOP = 227
-#     MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS = 228
+#     FLOW_CONTROL_EXECUTE_NOW_START = 220
+#     FLOW_CONTROL_EXECUTE_NOW_EXECUTE = 221
+#     FLOW_CONTROL_EXECUTE_NOW_UPDATE = 222
+#     FLOW_CONTROL_EXECUTE_NOW_STOP = 223
+#     FLOW_CONTROL_EXECUTE_PARALLEL_START = 224
+#     FLOW_CONTROL_EXECUTE_PARALLEL_EXECUTE = 225
+#     FLOW_CONTROL_EXECUTE_PARALLEL_UPDATE = 226
+#     FLOW_CONTROL_EXECUTE_PARALLEL_STOP = 227
+#     FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS = 228
 #
-#     MESSAGE_ERROR_TYPE = 1000
-#     MESSAGE_DATA = 1001
-#     MESSAGE_LOG = 1002
-MessageType = Enum('MESSAGE_PROCESS_STATE_CHANGE', 'MESSAGE_ACTION_START', 'MESSAGE_ACTION_STOP', 'MESSAGE_ACTION_ERROR'
-                   , 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_SETTING_UPDATE', 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_UPDATE'
-                   , 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_REMOVE', 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_CREATE'
-                   , 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_UPDATE', 'MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_REMOVE'
-                   , 'MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_CREATE', 'MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_UPDATE'
-                   , 'MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_REMOVE', 'MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_CREATE'
-                   , 'MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_UPDATE', 'MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_REMOVE'
-                   , 'MESSAGE_CONFIGURATION_CONTROL_CONTAINER_CREATE', 'MESSAGE_CONFIGURATION_CONTROL_CONTAINER_REMOVE'
-                   , 'MESSAGE_FLOW_CONTROL_EXECUTE_NOW_START', 'MESSAGE_FLOW_CONTROL_EXECUTE_NOW_EXECUTE'
-                   , 'MESSAGE_FLOW_CONTROL_EXECUTE_NOW_UPDATE', 'MESSAGE_FLOW_CONTROL_EXECUTE_NOW_STOP'
-                   , 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_START', 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_EXECUTE'
-                   , 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_UPDATE', 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_STOP'
-                   , 'MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS', 'MESSAGE_ERROR_TYPE'
-                   , 'MESSAGE_DATA', 'MESSAGE_LOG'
+#     ERROR = 1000
+#     DATA = 1001
+#     LOG = 1002
+MessageType = Enum('PROCESS_STATE_CHANGE', 'ACTION_START', 'ACTION_STOP', 'ACTION_ERROR'
+                   , 'CONFIGURATION_CONTROL_CONFIGURATION_SETTING_UPDATE', 'CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_UPDATE'
+                   , 'CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_REMOVE', 'CONFIGURATION_CONTROL_CONFIGURATION_CREATE'
+                   , 'CONFIGURATION_CONTROL_CONFIGURATION_UPDATE', 'CONFIGURATION_CONTROL_CONFIGURATION_REMOVE'
+                   , 'CONFIGURATION_CONTROL_EXECUTION_CONTEXT_CREATE', 'CONFIGURATION_CONTROL_EXECUTION_CONTEXT_UPDATE'
+                   , 'CONFIGURATION_CONTROL_EXECUTION_CONTEXT_REMOVE', 'CONFIGURATION_CONTROL_SOURCE_CONTEXT_CREATE'
+                   , 'CONFIGURATION_CONTROL_SOURCE_CONTEXT_UPDATE', 'CONFIGURATION_CONTROL_SOURCE_CONTEXT_REMOVE'
+                   , 'CONFIGURATION_CONTROL_CONTAINER_CREATE', 'CONFIGURATION_CONTROL_CONTAINER_REMOVE'
+                   , 'FLOW_CONTROL_EXECUTE_NOW_START', 'FLOW_CONTROL_EXECUTE_NOW_EXECUTE'
+                   , 'FLOW_CONTROL_EXECUTE_NOW_UPDATE', 'FLOW_CONTROL_EXECUTE_NOW_STOP'
+                   , 'FLOW_CONTROL_EXECUTE_PARALLEL_START', 'FLOW_CONTROL_EXECUTE_PARALLEL_EXECUTE'
+                   , 'FLOW_CONTROL_EXECUTE_PARALLEL_UPDATE', 'FLOW_CONTROL_EXECUTE_PARALLEL_STOP'
+                   , 'FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS'
+                   , 'ERROR', 'DATA', 'LOG'
                    )
-MessageType.MESSAGE_PROCESS_STATE_CHANGE.value = 1
-MessageType.MESSAGE_ACTION_START.value = 4
-MessageType.MESSAGE_ACTION_STOP.value = 6
-MessageType.MESSAGE_ACTION_ERROR.value = 7
-MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_SETTING_UPDATE.value = 108
-MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_UPDATE.value = 109
-MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_REMOVE.value = 110
-MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_CREATE.value = 111
-MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_UPDATE.value = 112
-MessageType.MESSAGE_CONFIGURATION_CONTROL_CONFIGURATION_REMOVE.value = 113
-MessageType.MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_CREATE.value = 114
-MessageType.MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_UPDATE.value = 115
-MessageType.MESSAGE_CONFIGURATION_CONTROL_EXECUTION_CONTEXT_REMOVE.value = 116
-MessageType.MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_CREATE.value = 117
-MessageType.MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_UPDATE.value = 118
-MessageType.MESSAGE_CONFIGURATION_CONTROL_SOURCE_CONTEXT_REMOVE.value = 119
-MessageType.MESSAGE_CONFIGURATION_CONTROL_CONTAINER_CREATE.value = 120
-MessageType.MESSAGE_CONFIGURATION_CONTROL_CONTAINER_REMOVE.value = 121
-MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_NOW_START.value = 220
-MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_NOW_EXECUTE.value = 221
-MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_NOW_UPDATE.value = 222
-MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_NOW_STOP.value = 223
-MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_START.value = 224
-MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_EXECUTE.value = 225
-MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_UPDATE.value = 226
-MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_STOP.value = 227
-MessageType.MESSAGE_FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS.value = 228
-MessageType.MESSAGE_ERROR_TYPE.value = 1000
-MessageType.MESSAGE_DATA.value = 1001
-MessageType.MESSAGE_LOG.value = 1002
+MessageType.PROCESS_STATE_CHANGE.value = 1
+MessageType.ACTION_START.value = 4
+MessageType.ACTION_STOP.value = 6
+MessageType.ACTION_ERROR.value = 7
+MessageType.CONFIGURATION_CONTROL_CONFIGURATION_SETTING_UPDATE.value = 108
+MessageType.CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_UPDATE.value = 109
+MessageType.CONFIGURATION_CONTROL_CONFIGURATION_VARIABLE_REMOVE.value = 110
+MessageType.CONFIGURATION_CONTROL_CONFIGURATION_CREATE.value = 111
+MessageType.CONFIGURATION_CONTROL_CONFIGURATION_UPDATE.value = 112
+MessageType.CONFIGURATION_CONTROL_CONFIGURATION_REMOVE.value = 113
+MessageType.CONFIGURATION_CONTROL_EXECUTION_CONTEXT_CREATE.value = 114
+MessageType.CONFIGURATION_CONTROL_EXECUTION_CONTEXT_UPDATE.value = 115
+MessageType.CONFIGURATION_CONTROL_EXECUTION_CONTEXT_REMOVE.value = 116
+MessageType.CONFIGURATION_CONTROL_SOURCE_CONTEXT_CREATE.value = 117
+MessageType.CONFIGURATION_CONTROL_SOURCE_CONTEXT_UPDATE.value = 118
+MessageType.CONFIGURATION_CONTROL_SOURCE_CONTEXT_REMOVE.value = 119
+MessageType.CONFIGURATION_CONTROL_CONTAINER_CREATE.value = 120
+MessageType.CONFIGURATION_CONTROL_CONTAINER_REMOVE.value = 121
+MessageType.FLOW_CONTROL_EXECUTE_NOW_START.value = 220
+MessageType.FLOW_CONTROL_EXECUTE_NOW_EXECUTE.value = 221
+MessageType.FLOW_CONTROL_EXECUTE_NOW_UPDATE.value = 222
+MessageType.FLOW_CONTROL_EXECUTE_NOW_STOP.value = 223
+MessageType.FLOW_CONTROL_EXECUTE_PARALLEL_START.value = 224
+MessageType.FLOW_CONTROL_EXECUTE_PARALLEL_EXECUTE.value = 225
+MessageType.FLOW_CONTROL_EXECUTE_PARALLEL_UPDATE.value = 226
+MessageType.FLOW_CONTROL_EXECUTE_PARALLEL_STOP.value = 227
+MessageType.FLOW_CONTROL_EXECUTE_PARALLEL_WAITING_TACTS.value = 228
+MessageType.ERROR.value = 1000
+MessageType.DATA.value = 1001
+MessageType.LOG.value = 1002
 
 # class ValueType(Enum):
 #     __order__ = 'STRING BYTE SHORT INTEGER LONG BIG_INTEGER FLOAT DOUBLE BIG_DECIMAL BYTES'
@@ -134,7 +135,7 @@ MessageType.MESSAGE_LOG.value = 1002
 #     DOUBLE = 7
 #     BIG_DECIMAL = 8
 #     BYTES = 9
-ValueType = Enum('STRING', 'BYTE', 'SHORT', 'INTEGER', 'LONG', 'BIG_INTEGER', 'FLOAT', 'DOUBLE', 'BIG_DECIMAL', 'BYTES', 'OBJECT_ARRAY')
+ValueType = Enum('STRING', 'BYTE', 'SHORT', 'INTEGER', 'LONG', 'BIG_INTEGER', 'FLOAT', 'DOUBLE', 'BIG_DECIMAL', 'BYTES', 'OBJECT_ARRAY', 'BOOLEAN')
 ValueType.STRING.value = 0
 ValueType.BYTE.value = 1
 ValueType.SHORT.value = 2
@@ -146,6 +147,7 @@ ValueType.DOUBLE.value = 7
 ValueType.BIG_DECIMAL.value = 8
 ValueType.BYTES.value = 9
 ValueType.OBJECT_ARRAY.value = 10
+ValueType.BOOLEAN.value = 11
 
 # class SourceType(Enum):
 #     __order__ = 'MODULE_CONFIGURATION EXECUTION_CONTEXT STATIC_VALUE MULTIPART CALLER CALLER_RELATIVE_NAME'
@@ -205,7 +207,7 @@ class IValue:
 
     @abstractmethod
     def getValue(self):
-        # type: () -> str or bytes or int or long or float
+        # type: () -> str or bytes or int or long or float or bool or ObjectArray
         """value as object"""
         pass
 
@@ -282,7 +284,7 @@ class ICommand:
 #     BIG_DECIMAL = 12
 #     BYTES = 13
 ObjectType = Enum('OBJECT_ARRAY', 'OBJECT_ELEMENT', 'VALUE_ANY', 'STRING', 'BYTE', 'SHORT', 'INTEGER', 'LONG', 'FLOAT', 'DOUBLE', 'BIG_INTEGER',
-                  'BIG_DECIMAL', 'BYTES')
+                  'BIG_DECIMAL', 'BYTES', 'BOOLEAN')
 ObjectType.OBJECT_ARRAY.value = 0
 ObjectType.OBJECT_ELEMENT.value = 1
 ObjectType.VALUE_ANY.value = 2
@@ -296,22 +298,25 @@ ObjectType.DOUBLE.value = 9
 ObjectType.BIG_INTEGER.value = 10
 ObjectType.BIG_DECIMAL.value = 11
 ObjectType.BYTES.value = 12
+ObjectType.BOOLEAN.value = 13
 
 
 class ObjectField(object):
-    def __init__(self, name, value):
-        # type: (str, object) -> None
+    def __init__(self, name, value, typev=None):
+        # type: (str, object, ObjectType) -> None
         self.name = name
-        self.type = None
-        self.value = None
-        self.setValue(value)
+        self.type = typev
+        self.value = value
+        if value is not None and typev is None:
+            self.setValue(value)
 
     def setValue(self, value):
-        # type: (object) -> None
-        if value is None:
-            raise ValueError("value is None")
+        # type: (object, type) -> None
         self.value = value
-        valueType = type(value)
+        if value is not None:
+            valueType = type(value)
+        else:
+            valueType = type("")
         if valueType is ObjectArray:
             self.type = ObjectType.OBJECT_ARRAY
         elif valueType is ObjectElement:
@@ -326,6 +331,8 @@ class ObjectField(object):
             self.type = ObjectType.STRING
         elif valueType is bytearray or valueType is bytes:
             self.type = ObjectType.BYTES
+        elif valueType is bool:
+            self.type = ObjectType.BOOLEAN
         elif valueType is int:
             self.type = ObjectType.INTEGER
         elif valueType is long:
@@ -349,7 +356,7 @@ class ObjectField(object):
         return self.type
 
     def getValue(self):
-        # type: () -> object
+        # type: () -> str or bytes or int or long or float or bool or ObjectArray or ObjectElement or None
         return self.value
 
     def isSimple(self):
@@ -357,10 +364,10 @@ class ObjectField(object):
         return ObjectType.OBJECT_ARRAY != self.type and ObjectType.OBJECT_ELEMENT != self.type
 
     def __str__(self):
-        return "ObjectField[name=%s, type=%s, value=%r]" % (self.name, self.type, self.value)
+        return "%s %s=%r" % (self.type, self.name, self.value)
 
     def __repr__(self):
-        return "ObjectField[name=%s, type=%s, value=%r]" % (self.name, self.type, self.value)
+        return "%s %s=%r" % (self.type, self.name, self.value)
 
 
 class ObjectElement(object):
@@ -371,6 +378,25 @@ class ObjectElement(object):
         else:
             self.fields = []
 
+    def getFields(self):
+        # type: () -> List[ObjectField]
+        return self.fields
+
+    def findField(self, name):
+        # type: (str) -> Optional[ObjectField]
+        for f in self.fields:
+            if f.name == name:
+                return f
+        return None
+
+    def findFieldIgnoreCase(self, name):
+        # type: (str) -> Optional[ObjectField]
+        name = name.lower()
+        for f in self.fields:
+            if f.name.lower() == name:
+                return f
+        return None
+
     def isSimple(self):
         # type: () -> bool
         isSimple = True
@@ -380,38 +406,28 @@ class ObjectElement(object):
                 break
         return isSimple
 
-    def findField(self, name):
-        # type: (str) -> Optional[ObjectField]
-        for f in self.fields:
-            if f.name == name:
-                return f
-        return None
-
-    def getFields(self):
-        # type: () -> List[ObjectField]
-        return self.fields
-
     def __str__(self):
-        return "ObjectElement[fields=%r]" % (self.fields)
+        return "{count=%d, fields=%r}" % (len(self.fields), self.fields)
 
     def __repr__(self):
-        return "ObjectElement[fields=%r]" % (self.fields)
+        return "{count=%d, fields=%r}" % (len(self.fields), self.fields)
 
 
 class ObjectArray(object):
-    def __init__(self, type=ObjectType.OBJECT_ELEMENT, objects=None):
+    def __init__(self, typev=ObjectType.OBJECT_ELEMENT, objects=None):
         # type: (ObjectType, List[object]) -> None
-        self.type = type
+        self.type = typev
         self.objects = []
         if objects is not None:
             for obj in objects:
                 self.add(obj)
 
-    def check(self, obj):
-        # type: (object) -> None
+    def check(self, obj, valueType=None):
+        # type: (object, type) -> None
         if obj is None:
             raise ValueError("obj is None")
-        valueType = type(obj)
+        if valueType is None:
+            valueType = type(obj)
         if self.type == ObjectType.OBJECT_ARRAY:
             if valueType is not ObjectArray:
                 raise ValueError("wrong obj type")
@@ -419,7 +435,7 @@ class ObjectArray(object):
             if valueType is not ObjectElement:
                 raise ValueError("wrong obj type")
         elif self.type == ObjectType.VALUE_ANY:
-            if valueType is not str and valueType is not unicode and valueType is not bytearray and valueType is not bytes and valueType is not int and valueType is not long and valueType is not float:
+            if valueType is not str and valueType is not unicode and valueType is not bytearray and valueType is not bytes and valueType is not int and valueType is not long and valueType is not float and valueType is not bool:
                 raise ValueError("wrong obj type")
         elif self.type == ObjectType.STRING:
             if valueType is not str or valueType is not unicode:  # not isinstance(obj, basestring)
@@ -436,8 +452,19 @@ class ObjectArray(object):
         elif self.type == ObjectType.DOUBLE:
             if valueType is not float:
                 raise ValueError("wrong obj type")
+        elif self.type == ObjectType.BOOLEAN:
+            if valueType is not bool:
+                raise ValueError("wrong obj type")
         else:
             raise ValueError("wrong obj type")
+
+    def size(self):
+        # type: () -> int
+        return len(self.objects)
+
+    def get(self, id):
+        # type: (int) -> object
+        return self.objects[id]
 
     def add(self, obj):
         # type: (object) -> None
@@ -446,7 +473,7 @@ class ObjectArray(object):
             obj = obj.getValue()
         elif valueType is IValue:
             obj = obj.getValue()
-        self.check(obj)
+        self.check(obj, valueType)
         self.objects.append(obj)
 
     def set(self, id, obj):
@@ -458,14 +485,6 @@ class ObjectArray(object):
             obj = obj.getValue()
         self.check(obj)
         self.objects[id] = obj
-
-    def get(self, id):
-        # type: (int) -> object
-        return self.objects[id]
-
-    def size(self):
-        # type: () -> int
-        return len(self.objects)
 
     def remove(self, id):
         # type: (int) -> None
@@ -480,10 +499,10 @@ class ObjectArray(object):
         return ObjectType.OBJECT_ARRAY != self.type and ObjectType.OBJECT_ELEMENT != self.type
 
     def __str__(self):
-        return "ObjectArray[type=%s, objects=%r]" % (self.type, self.objects)
+        return "[size=%d, objects=%r, type=%s]" % (len(self.objects), self.objects, self.type)
 
     def __repr__(self):
-        return "ObjectArray[type=%s, objects=%r]" % (self.type, self.objects)
+        return "[size=%d, objects=%r, type=%s]" % (len(self.objects), self.objects, self.type)
 
 
 class CFGIModule:
@@ -498,39 +517,73 @@ class CFGIModule:
         pass
 
     @abstractmethod
-    def getMinCountSources(self):
+    def countTypes(self):
         # type: () -> int
-        """get minimum count sources"""
+        """count types"""
         pass
 
     @abstractmethod
-    def getMaxCountSources(self):
-        # type: () -> int
-        """get maximum count sources"""
+    def getTypeName(self, typeId):
+        # type: (int) -> str
+        """
+        get type name
+
+        :param int typeId:      serial number in the list of types
+        """
         pass
 
     @abstractmethod
-    def getMinCountExecutionContexts(self):
-        # type: () -> int
-        """get minimum count execution contexts"""
+    def getMinCountSources(self, typeId):
+        # type: (int) -> int
+        """get minimum count sources
+
+        :param int typeId:      serial number in the list of types
+        """
         pass
 
     @abstractmethod
-    def getMaxCountExecutionContexts(self):
-        # type: () -> int
-        """get maximum count execution contexts"""
+    def getMaxCountSources(self, typeId):
+        # type: (int) -> int
+        """get maximum count sources
+
+        :param int typeId:      serial number in the list of types
+        """
         pass
 
     @abstractmethod
-    def getMinCountManagedConfigurations(self):
-        # type: () -> int
-        """get minimum count managed configurations"""
+    def getMinCountExecutionContexts(self, typeId):
+        # type: (int) -> int
+        """get minimum count execution contexts
+
+        :param int typeId:      serial number in the list of types
+        """
         pass
 
     @abstractmethod
-    def getMaxCountManagedConfigurations(self):
-        # type: () -> int
-        """get maximum count managed configurations"""
+    def getMaxCountExecutionContexts(self, typeId):
+        # type: (int) -> int
+        """get maximum count execution contexts
+
+        :param int typeId:      serial number in the list of types
+        """
+        pass
+
+    @abstractmethod
+    def getMinCountManagedConfigurations(self, typeId):
+        # type: (int) -> int
+        """get minimum count managed configurations
+
+        :param int typeId:      serial number in the list of types
+        """
+        pass
+
+    @abstractmethod
+    def getMaxCountManagedConfigurations(self, typeId):
+        # type: (int) -> int
+        """get maximum count managed configurations
+
+        :param int typeId:      serial number in the list of types
+        """
         pass
 
 
@@ -662,7 +715,7 @@ class CFGISourceFilter:
 
     @abstractmethod
     def getParam(self, id):
-        # type: (int) -> object
+        # type: (int) -> Optional[object]
         """
         get param
         params may have any types, depends on the SourceFilterType and id
@@ -698,7 +751,7 @@ class CFGISource:
 
     @abstractmethod
     def getParam(self, id):
-        # type: (int) -> object
+        # type: (int) -> Optional[object]
         """
         get param
         params may have any types, depends on the SourceType and id
@@ -707,7 +760,7 @@ class CFGISource:
         :returns:
             - MODULE_CONFIGURATION: CFGIConfiguration configuration (source), SourceGetType getType (type of get commands from source), int countLast (only for SourceGetType.LAST. minimum 1), boolean eventDriven (is event driven)
             - EXECUTION_CONTEXT: CFGIExecutionContext executionContext (source), SourceGetType getType (type of get commands from source), int countLast (only for SourceGetType.LAST. minimum 1), boolean eventDriven (is event driven)
-            - STATIC_VALUE: IValue (String, Number or byte array)
+            - STATIC_VALUE: IValue (str, number, bytes, bool, ObjectArray)
             - MULTIPART: null
             - CALLER_RELATIVE_NAME: string (caller level cfg name)
         """
@@ -959,7 +1012,7 @@ class CFGISourceListManaged(CFGISourceList):
         add source to end of current list (order = max_order + 1)
         created ContextSourceType is STATIC_VALUE
 
-        :param object value: str, number or byte array.
+        :param object value:    str, number, bytes, bool, ObjectArray.
         """
         pass
 
@@ -1024,7 +1077,7 @@ class CFGISourceListManaged(CFGISourceList):
         ContextSourceType is OBJECT_ARRAY
 
         :param int id:          serial number in the list of sources
-        :param object value: str, number or byte array.
+        :param object value:    str, number, bytes, bool, ObjectArray.
         """
         pass
 
@@ -1103,7 +1156,7 @@ class CFGIConfiguration:
 
     @abstractmethod
     def getAllSettings(self):
-        # type: () -> Dict[str, str or bytes or int or long or float]
+        # type: () -> Dict[str, IValue]
         """
         get all settings
         """
@@ -1204,6 +1257,17 @@ class CFGIExecutionContext(CFGISourceList):
     def isActive(self):
         # type: () -> bool
         """check is context work now (execute any command)"""
+        pass
+
+    @abstractmethod
+    def getType(self):
+        # type: () -> str
+        """
+        get type
+        unique for configuration
+
+        :returns: type or empty for default/any type
+        """
         pass
 
 
@@ -1350,6 +1414,16 @@ class CFGIExecutionContextManaged(CFGIExecutionContext, CFGISourceListManaged):
         """
         pass
 
+    @abstractmethod
+    def setType(self, type):
+        # type: (str) -> None
+        """
+        change type
+
+        :param str type:        type name or empty for default/any type (if exist)
+        """
+        pass
+
 
 class CFGIConfigurationManaged(CFGIConfiguration):
     """Interface for Managed Module Configuration"""
@@ -1373,7 +1447,7 @@ class CFGIConfigurationManaged(CFGIConfiguration):
         change setting
 
         :param str key:         setting name
-        :param object value:    value object (string, number, bytes)
+        :param object value:    value object (str, number, bytes, bool, ObjectArray)
         """
         pass
 
@@ -1384,7 +1458,7 @@ class CFGIConfigurationManaged(CFGIConfiguration):
         change variable
 
         :param str key:         variable name
-        :param str or bytes or int or long or float value:    value object
+        :param object value:    value object (str, number, bytes, bool, ObjectArray)
         """
         pass
 
@@ -1667,17 +1741,6 @@ class ConfigurationTool(CFGIConfiguration):
         pass
 
     @abstractmethod
-    def hasLicense(self, freeDays):
-        # type: (int) -> bool
-        """
-        check if has license
-
-        :param int freeDays:         free trial days. 0 or more.
-        :returns bool - true if has license
-        """
-        pass
-
-    @abstractmethod
     def loggerTrace(self, text):
         # type: (str) -> None
         """
@@ -1801,25 +1864,25 @@ class FlowControlTool:
         command execute in this thread
         function will wait for the command to execute
 
-        type                   type of command
-        managedId              serial number in the list of Managed execution contexts
-        values                 list of values for create dummy messages from this process, or null
+        :param CommandType type:           type of command
+        :param int managedId:              serial number in the list of Managed execution contexts
+        :param list values:                list of values for create dummy messages from this process, or null
         """
         pass
 
     @abstractmethod
     def executeParallel(self, type, managedIds, values, waitingTacts=0, maxWorkInterval=-1):
-        # type: (CommandType, List[int], List[object], int, int) -> int
+        # type: (CommandType, List[int], List[object], int, int) -> long
         """
         throw new command to managed execution context
         command execute in new thread
         function return control immediately
 
-        type                   type of command
-        managedIds             list of serial numbers in the list of Managed execution contexts
-        values                 list of values for create dummy messages from this process, or null
-        waitingTacts           if it is necessary that the new thread first wait for the specified time (in tacts)
-        maxWorkInterval        define max work interval of new thread (in tacts)
+        :param CommandType type:           type of command
+        :param list managedIds:            list of serial numbers in the list of Managed execution contexts
+        :param list values:                list of values for create dummy messages from this process, or null
+        :param int waitingTacts:           if it is necessary that the new thread first wait for the specified time (in tacts)
+        :param int maxWorkInterval:        define max work interval of new thread (in tacts)
 
         return id of thread
         """
@@ -1827,23 +1890,23 @@ class FlowControlTool:
 
     @abstractmethod
     def isThreadActive(self, threadId):
-        # type: (int) -> int
+        # type: (long) -> bool
         """
         check is thread alive
 
-        threadId               id thread
+        :param long threadId:               id thread
         """
         pass
 
     @abstractmethod
     def getMessagesFromExecuted(self, threadId=0, managedId=0):
-        # type: (int, int) -> List[IAction]
+        # type: (long, int) -> List[IAction]
         """
         get data from managed execution context
         who receive commands from this process
 
-        threadId               id thread. if 0 then using data from current thread
-        managedId              serial number in the list of Managed execution contexts
+        :param long threadId:               id thread. if 0 then using data from current thread
+        :param int managedId:              serial number in the list of Managed execution contexts
 
         return only DATA messages
         """
@@ -1851,12 +1914,12 @@ class FlowControlTool:
 
     @abstractmethod
     def getCommandsFromExecuted(self, threadId=0, managedId=0):
-        # type: (int, int) -> List[ICommand]
+        # type: (long, int) -> List[ICommand]
         """
         work as getMessagesFromExecuted
 
-        threadId               id thread. if 0 then using data from current thread
-        managedId              serial number in the list of Managed execution contexts
+        :param long threadId:               id thread. if 0 then using data from current thread
+        :param int managedId:              serial number in the list of Managed execution contexts
 
         return commands
         """
@@ -1864,11 +1927,22 @@ class FlowControlTool:
 
     @abstractmethod
     def releaseThread(self, threadId):
-        # type: (int) -> None
+        # type: (long) -> None
+        """
+        after executeParallel and work with him, need to release thread
+        if thread work - not stop it
+
+        :param long threadId:               id thread
+        """
+        pass
+
+    @abstractmethod
+    def releaseThreadCache(self, threadId):
+        # type: (long) -> None
         """
         after executeParallel and work with him, need to release thread
 
-        threadId               id thread
+        :param long threadId:               id thread
         """
         pass
 
@@ -1878,7 +1952,7 @@ class FlowControlTool:
         """
         get managed execution context
 
-        id                     serial number in the list of Managed execution contexts
+        :param int id:                     serial number in the list of Managed execution contexts
 
         return CFGIExecutionContext or None
         """
@@ -1896,7 +1970,7 @@ class ExecutionContextTool(CFGIExecutionContext):
         """
         emit message
 
-        :param object value:    object (string, number, bytes)
+        :param object value:    object (str, number, bytes, bool, ObjectArray)
         """
         pass
 
@@ -1906,7 +1980,7 @@ class ExecutionContextTool(CFGIExecutionContext):
         """
         emit error message
 
-        :param object value:    object (string, number, bytes)
+        :param object value:    object (str, number, bytes, bool, ObjectArray)
         """
         pass
 
