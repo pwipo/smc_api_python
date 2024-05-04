@@ -443,13 +443,13 @@ class ObjectArray(object):
         elif self.type == ObjectType.BYTES:
             if valueType is not bytearray or valueType is not bytes:
                 raise ValueError("wrong obj type")
-        elif self.type == ObjectType.INTEGER:
+        elif self.type == ObjectType.BYTE or self.type == ObjectType.SHORT or self.type == ObjectType.INTEGER:
             if valueType is not int:
                 raise ValueError("wrong obj type")
         elif self.type == ObjectType.LONG:
             if valueType is not long:
                 raise ValueError("wrong obj type")
-        elif self.type == ObjectType.DOUBLE:
+        elif self.type == ObjectType.FLOAT or self.type == ObjectType.DOUBLE:
             if valueType is not float:
                 raise ValueError("wrong obj type")
         elif self.type == ObjectType.BOOLEAN:
