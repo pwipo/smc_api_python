@@ -302,7 +302,7 @@ ObjectType.BOOLEAN.value = 13
 
 
 class ObjectField(object):
-    def __init__(self, name, value, typev=None):
+    def __init__(self, name, value=None, typev=None):
         # type: (str, object, ObjectType) -> None
         self.name = name
         self.type = typev
@@ -310,42 +310,53 @@ class ObjectField(object):
         if value is not None and typev is None:
             self.setValue(value)
 
-    def setValue(self, value):
+    def setValue(self, value, typev=None):
         # type: (object, type) -> None
         self.value = value
         if value is not None:
             valueType = type(value)
         else:
-            valueType = type("")
-        if valueType is ObjectArray:
-            self.type = ObjectType.OBJECT_ARRAY
-        elif valueType is ObjectElement:
-            self.type = ObjectType.OBJECT_ELEMENT
-        elif valueType is ObjectField:
-            self.type = value.getType()
-            self.value = value.getValue()
-        elif valueType is IValue:
-            self.type = ObjectType._values[ObjectType._keys.index(str(value.getType()))]
-            self.value = value.getValue()
-        elif valueType is str or valueType is unicode:
-            self.type = ObjectType.STRING
-        elif valueType is bytearray or valueType is bytes:
-            self.type = ObjectType.BYTES
-        elif valueType is bool:
-            self.type = ObjectType.BOOLEAN
-        elif valueType is int:
-            self.type = ObjectType.INTEGER
-        elif valueType is long:
-            self.type = ObjectType.LONG
-        elif valueType is float:
-            self.type = ObjectType.DOUBLE
-        else:
-            doubleValueFunc = getattr(value, "doubleValue", None)
-            if callable(doubleValueFunc):
+            valueType = None
+        if typev is None:
+            if valueType is ObjectArray:
+                self.type = ObjectType.OBJECT_ARRAY
+            elif valueType is ObjectElement:
+                self.type = ObjectType.OBJECT_ELEMENT
+            elif valueType is ObjectField:
+                self.type = value.getType()
+                self.value = value.getValue()
+            elif valueType is IValue:
+                self.type = ObjectType._values[ObjectType._keys.index(str(value.getType()))]
+                self.value = value.getValue()
+            elif valueType is str or valueType is unicode:
+                self.type = ObjectType.STRING
+            elif valueType is bytearray or valueType is bytes:
+                self.type = ObjectType.BYTES
+            elif valueType is bool:
+                self.type = ObjectType.BOOLEAN
+            elif valueType is int:
+                self.type = ObjectType.INTEGER
+            elif valueType is long:
+                self.type = ObjectType.LONG
+            elif valueType is float:
                 self.type = ObjectType.DOUBLE
-                self.value = doubleValueFunc()
+            elif valueType is not None:
+                doubleValueFunc = getattr(value, "doubleValue", None)
+                if callable(doubleValueFunc):
+                    self.type = ObjectType.DOUBLE
+                    self.value = doubleValueFunc()
+                else:
+                    raise ValueError("wrong type {}".format(valueType))
             else:
                 raise ValueError("wrong type {}".format(valueType))
+        else:
+            self.type = typev
+            if valueType is ObjectField:
+                self.type = value.getType()
+                self.value = value.getValue()
+            elif valueType is IValue:
+                self.type = ObjectType._values[ObjectType._keys.index(str(value.getType()))]
+                self.value = value.getValue()
 
     def getName(self):
         # type: () -> str
