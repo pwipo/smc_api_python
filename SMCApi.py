@@ -1535,24 +1535,26 @@ class CFGIConfigurationManaged(CFGIConfiguration):
         pass
 
     @abstractmethod
-    def createExecutionContext(self, name, maxWorkInterval=-1):
-        # type: (str, int) -> CFGIExecutionContextManaged
+    def createExecutionContext(self, name, type, maxWorkInterval=-1):
+        # type: (str, str, int) -> CFGIExecutionContextManaged
         """
         create execution context and bind it to this configuration
 
         :param str name:        unique name for configuration
+        :param str type:        ec type
         :param int maxWorkInterval: max work interval. if -1, no time limit. in milliseconds. default is -1
         """
         pass
 
     @abstractmethod
-    def updateExecutionContext(self, id, name, maxWorkInterval=-1):
-        # type: (int, str, int) -> CFGIExecutionContextManaged
+    def updateExecutionContext(self, id, name, type, maxWorkInterval=-1):
+        # type: (int, str, str, int) -> CFGIExecutionContextManaged
         """
         update execution context
 
         :param int id:              serial number in the list of Execution Contexts
         :param str name:            unique name for configuration
+        :param str type:            ec type
         :param int maxWorkInterval: max work interval. if -1, no time limit. in milliseconds. default is -1
         """
         pass
