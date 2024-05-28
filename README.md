@@ -1,4 +1,6 @@
 # smc_api_python
-smc api for python 2
+SMC API for python 2
+<br/>
+ver 1.4.0
 <br/>
 site: http://www.smcsystem.ru
