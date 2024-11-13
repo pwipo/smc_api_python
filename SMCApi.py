@@ -1803,6 +1803,18 @@ class ConfigurationTool(CFGIConfiguration):
         """
         pass
 
+    @abstractmethod
+    def getInfo(self, key):
+        # type: (str) -> Optional[IValue]
+        """
+        get info by key
+
+        :param str key:         key name
+        :returns:
+            - str or bytes or int or long or float - if exist
+            - None - if not find
+        """
+        pass
 
 class ConfigurationControlTool:
     """Tool for work with managed configurations"""
