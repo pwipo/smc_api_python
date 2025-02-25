@@ -5,9 +5,8 @@ http://www.smcsystem.ru
 import datetime
 from __builtin__ import long, unicode
 from abc import ABCMeta, abstractmethod
-from typing import List, Dict, Optional
-
 from enum import Enum
+from typing import List, Dict, Optional
 
 
 class ModuleException(Exception):
@@ -380,6 +379,14 @@ class ObjectField(object):
     def __repr__(self):
         return "%s %s=%r" % (self.type, self.name, self.value)
 
+    def __eq__(self, o):
+        if self is o:
+            return True
+        return o and isinstance(o, ObjectField) and self.type == o.type and self.name == o.name and self.value == o.value
+
+    def __ne__(self, o):
+        return not self.__eq__(o)
+
 
 class ObjectElement(object):
     def __init__(self, fields=None):
@@ -422,6 +429,21 @@ class ObjectElement(object):
 
     def __repr__(self):
         return "{count=%d, fields=%r}" % (len(self.fields), self.fields)
+
+    def __eq__(self, o):
+        if self is o:
+            return True
+        if not o or not isinstance(o, ObjectElement) or len(self.fields) != len(o.fields):
+            return False
+        result = True
+        for f in self.fields:
+            if o.findField(f.name) != f:
+                result = False
+                break
+        return result
+
+    def __ne__(self, o):
+        return not self.__eq__(o)
 
 
 class ObjectArray(object):
@@ -514,6 +536,14 @@ class ObjectArray(object):
 
     def __repr__(self):
         return "[size=%d, objects=%r, type=%s]" % (len(self.objects), self.objects, self.type)
+
+    def __eq__(self, o):
+        if self is o:
+            return True
+        return o and isinstance(o, ObjectArray) and self.type == o.type and self.objects == o.objects
+
+    def __ne__(self, o):
+        return not self.__eq__(o)
 
 
 class CFGIModule:
@@ -1815,6 +1845,7 @@ class ConfigurationTool(CFGIConfiguration):
             - None - if not find
         """
         pass
+
 
 class ConfigurationControlTool:
     """Tool for work with managed configurations"""
