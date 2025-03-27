@@ -5,8 +5,9 @@ http://www.smcsystem.ru
 import datetime
 from __builtin__ import long, unicode
 from abc import ABCMeta, abstractmethod
-from enum import Enum
 from typing import List, Dict, Optional
+
+from enum import Enum
 
 
 class ModuleException(Exception):
@@ -1196,48 +1197,6 @@ class CFGIConfiguration:
         pass
 
     @abstractmethod
-    def getAllSettings(self):
-        # type: () -> Dict[str, IValue]
-        """
-        get all settings
-        """
-        pass
-
-    @abstractmethod
-    def getSetting(self, key):
-        # type: (str) -> Optional[IValue]
-        """
-        get setting value
-
-        :param str key:         setting name
-        :returns:
-            - str or bytes or int or long or float - if exist
-            - None - if not find
-        """
-        pass
-
-    @abstractmethod
-    def getAllVariables(self):
-        # type: () -> Dict[str, IValue]
-        """
-        get all variables
-        """
-        pass
-
-    @abstractmethod
-    def getVariable(self, key):
-        # type: (str) -> Optional[IValue]
-        """
-        get variable value
-
-        :param str key:         variable name
-        :returns:
-            - str or bytes or int or long or float - if exist
-            - None - if not find
-        """
-        pass
-
-    @abstractmethod
     def getBufferSize(self):
         # type: () -> int
         """get buffer size"""
@@ -1482,6 +1441,48 @@ class CFGIConfigurationManaged(CFGIConfiguration):
         pass
 
     @abstractmethod
+    def getAllSettings(self):
+        # type: () -> Dict[str, IValue]
+        """
+        get all settings
+        """
+        pass
+
+    @abstractmethod
+    def getSetting(self, key):
+        # type: (str) -> Optional[IValue]
+        """
+        get setting value
+
+        :param str key:         setting name
+        :returns:
+            - str or bytes or int or long or float - if exist
+            - None - if not find
+        """
+        pass
+
+    @abstractmethod
+    def getAllVariables(self):
+        # type: () -> Dict[str, IValue]
+        """
+        get all variables
+        """
+        pass
+
+    @abstractmethod
+    def getVariable(self, key):
+        # type: (str) -> Optional[IValue]
+        """
+        get variable value
+
+        :param str key:         variable name
+        :returns:
+            - str or bytes or int or long or float - if exist
+            - None - if not find
+        """
+        pass
+
+    @abstractmethod
     def setSetting(self, key, value):
         # type: (str, object) -> None
         """
@@ -1709,6 +1710,48 @@ class ConfigurationTool(CFGIConfiguration):
     """main configuration tool"""
 
     __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def getAllSettings(self):
+        # type: () -> Dict[str, IValue]
+        """
+        get all settings
+        """
+        pass
+
+    @abstractmethod
+    def getSetting(self, key):
+        # type: (str) -> Optional[IValue]
+        """
+        get setting value
+
+        :param str key:         setting name
+        :returns:
+            - str or bytes or int or long or float - if exist
+            - None - if not find
+        """
+        pass
+
+    @abstractmethod
+    def getAllVariables(self):
+        # type: () -> Dict[str, IValue]
+        """
+        get all variables
+        """
+        pass
+
+    @abstractmethod
+    def getVariable(self, key):
+        # type: (str) -> Optional[IValue]
+        """
+        get variable value
+
+        :param str key:         variable name
+        :returns:
+            - str or bytes or int or long or float - if exist
+            - None - if not find
+        """
+        pass
 
     @abstractmethod
     def setVariable(self, key, value):
