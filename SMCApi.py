@@ -735,6 +735,34 @@ class CFGIContainerManaged(CFGIContainer):
         """
         pass
 
+    @abstractmethod
+    def getConfigurationManaged(self, id):
+        # type: (int) -> Optional[CFGIConfigurationManaged]
+        """
+        get child configuration as managed
+        similar getConfiguration
+
+        :param int id:         serial number in the list of child configurations
+        :returns:
+            - CFGIConfigurationManaged - if exist
+            - None - if not find
+        """
+        pass
+
+    @abstractmethod
+    def getContainerManaged(self, id):
+        # type: (int) -> Optional[CFGIContainerManaged]
+        """
+        get child container as managed
+        similar getContainer
+
+        :param int id:         serial number in the list of child containers
+        :returns:
+            - CFGIContainerManaged - if exist
+            - None - if not find
+        """
+        pass
+
 
 class CFGISourceFilter:
     """Interface for Source filter"""
