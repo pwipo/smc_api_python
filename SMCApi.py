@@ -628,6 +628,16 @@ class CFGIModule:
         """
         pass
 
+    @abstractmethod
+    def getInfo(self):
+        # type: () -> ObjectElement
+        """
+        get module info
+        on english
+        object contain fields: description, settings, types
+        """
+        pass
+
 
 class CFGIContainer:
     """Interface for Container"""
@@ -760,6 +770,48 @@ class CFGIContainerManaged(CFGIContainer):
         :returns:
             - CFGIContainerManaged - if exist
             - None - if not find
+        """
+        pass
+
+    @abstractmethod
+    def getShapes(self):
+        # type: () -> ObjectArray
+        """
+        get all shapes in container
+
+        :returns ObjectArray
+        """
+        pass
+
+    @abstractmethod
+    def getDecorationShapes(self):
+        # type: () -> ObjectArray
+        """
+        get decoration shapes in container
+        not include cfgs, apps and containers
+
+        :returns ObjectArray
+        """
+        pass
+
+    @abstractmethod
+    def getSmcl(self):
+        # type: () -> str
+        """
+        get all cfgs as text on smcl in current container
+
+        :returns str: smcl text
+        """
+        pass
+
+    @abstractmethod
+    def saveSmcl(self, text):
+        # type: (str) -> bool
+        """
+        save and execute text on smcl in current container
+
+        :param str text:         text on smcl
+        :returns bool: true if success
         """
         pass
 
@@ -1248,6 +1300,22 @@ class CFGIConfiguration:
         """check is configuration work now (process execute any commands)"""
         pass
 
+    @abstractmethod
+    def getContainerSimple(self):
+        # type: () -> CFGIContainer
+        """
+        get container
+        """
+        pass
+
+    @abstractmethod
+    def getShape(self):
+        # type: () -> ObjectElement
+        """
+        get own shape
+        """
+        pass
+
 
 class CFGIExecutionContext(CFGISourceList):
     """Interface for Execution Context"""
@@ -1634,6 +1702,13 @@ class CFGIConfigurationManaged(CFGIConfiguration):
         """
         get container
         """
+        pass
+
+    @abstractmethod
+    def getWorkDirectory(self):
+        # type: () -> Optional[str]
+        """get full path to work directory
+        only if module allow this"""
         pass
 
 
@@ -2085,6 +2160,65 @@ class FlowControlTool:
         """
         pass
 
+    @abstractmethod
+    def executeNowDirect(self, type, managedEC, values):
+        # type: (CommandType, CFGIExecutionContextManaged, List[object]) -> None
+        """
+        throw new command to managed execution context
+        command execute in this thread
+        function will wait for the command to execute
+
+        :param CommandType type:           type of command
+        :param CFGIExecutionContextManaged managedEC:              managed execution context
+        :param list values:                list of values for create dummy messages from this process, or null
+        """
+        pass
+
+    @abstractmethod
+    def executeParallelDirect(self, type, managedECs, values, waitingTacts=0, maxWorkInterval=-1):
+        # type: (CommandType, List[CFGIExecutionContextManaged], List[object], int, int) -> long
+        """
+        throw new command to managed execution context
+        command execute in new thread
+        function return control immediately
+
+        :param CommandType type:           type of command
+        :param list managedECs:            list of managed execution contexts
+        :param list values:                list of values for create dummy messages from this process, or null
+        :param int waitingTacts:           if it is necessary that the new thread first wait for the specified time (in tacts)
+        :param int maxWorkInterval:        define max work interval of new thread (in tacts)
+
+        return id of thread
+        """
+        pass
+
+    @abstractmethod
+    def getMessagesFromExecutedDirect(self, managedEC, threadId=0):
+        # type: (CFGIExecutionContextManaged, long) -> List[IAction]
+        """
+        get data from managed execution context
+        who receive commands from this process
+
+        :param CFGIExecutionContextManaged managedEC:              managed execution context
+        :param long threadId:               id thread. if 0 then using data from current thread
+
+        return only DATA messages
+        """
+        pass
+
+    @abstractmethod
+    def getCommandsFromExecutedDirect(self, managedEC, threadId=0):
+        # type: (CFGIExecutionContextManaged, long) -> List[ICommand]
+        """
+        work as getMessagesFromExecuted
+
+        :param CFGIExecutionContextManaged managedEC:              managed execution context
+        :param long threadId:               id thread. if 0 then using data from current thread
+
+        return commands
+        """
+        pass
+
 
 class ExecutionContextTool(CFGIExecutionContext):
     """main execution context tool"""
@@ -2207,4 +2341,16 @@ class ExecutionContextTool(CFGIExecutionContext):
         # type: () -> bool
         """check is need stop process work immediately
         usefull for long work (example - web server)"""
+        pass
+
+    @abstractmethod
+    def getThreadId(self):
+        # type: () -> int
+        """get current thread id"""
+        pass
+
+    @abstractmethod
+    def getNickName(self):
+        # type: () -> str
+        """get current user nickname"""
         pass
